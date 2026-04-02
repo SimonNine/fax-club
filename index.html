@@ -805,6 +805,92 @@
       color: var(--amber-light);
     }
 
+    /* ==================== DUAL IMAGE STRIP ==================== */
+    .dual-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 50vh;
+      min-height: 400px;
+    }
+
+    .dual-strip .strip-panel {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dual-strip .strip-panel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: sepia(15%) contrast(1.05) brightness(0.95);
+      transition: all 0.8s ease;
+    }
+
+    .dual-strip .strip-panel:hover img {
+      filter: sepia(0%) contrast(1.1) brightness(1);
+      transform: scale(1.03);
+    }
+
+    .dual-strip .strip-label {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cream);
+      background: rgba(26,26,24,0.6);
+      backdrop-filter: blur(4px);
+      padding: 0.6rem 1.2rem;
+    }
+
+    @media (max-width: 768px) {
+      .dual-strip { grid-template-columns: 1fr; height: auto; }
+      .dual-strip .strip-panel { height: 40vh; }
+    }
+
+    /* ==================== HERO IMAGE MOSAIC ==================== */
+    .hero-mosaic {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 35vh 35vh;
+      gap: 4px;
+    }
+
+    .hero-mosaic .mosaic-item {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-mosaic .mosaic-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: sepia(20%) contrast(1.05) brightness(0.9);
+      transition: all 0.6s ease;
+    }
+
+    .hero-mosaic .mosaic-item:hover img {
+      filter: sepia(0%) contrast(1.1) brightness(1);
+      transform: scale(1.05);
+    }
+
+    .hero-mosaic .mosaic-item:first-child {
+      grid-row: 1 / 3;
+    }
+
+    @media (max-width: 768px) {
+      .hero-mosaic {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 30vh 30vh 30vh;
+      }
+      .hero-mosaic .mosaic-item:first-child {
+        grid-column: 1 / -1;
+        grid-row: auto;
+      }
+    }
+
     /* ==================== HORIZONTAL SCROLL TEXT ==================== */
     .scroll-text-section {
       padding: 4rem 0;
@@ -1151,16 +1237,29 @@
     </div>
   </div>
 
+  <!-- Image Mosaic -->
+  <div class="hero-mosaic">
+    <div class="mosaic-item">
+      <img src="images/hero-mainframe.jpg" alt="Woman operating mainframe with stacks of printouts" loading="lazy">
+    </div>
+    <div class="mosaic-item">
+      <img src="images/hero-office80s.jpg" alt="Two women working at early office computer with printer" loading="lazy">
+    </div>
+    <div class="mosaic-item">
+      <img src="images/hero-cubicle.jpg" alt="Office worker on phone at cubicle desk" loading="lazy">
+    </div>
+    <div class="mosaic-item">
+      <img src="images/hero-sleeping.jpg" alt="Office worker asleep at desk surrounded by papers" loading="lazy">
+    </div>
+    <div class="mosaic-item">
+      <img src="images/hero-buried.jpg" alt="Person buried under folders next to typewriter" loading="lazy">
+    </div>
+  </div>
+
   <!-- About / Concept -->
   <section class="concept" id="about">
     <div class="concept-visual">
-      <!-- Placeholder for retro office image -->
-      <div style="width:100%;height:100%;background:linear-gradient(135deg, var(--paper) 0%, #d4cfc1 100%);display:flex;align-items:center;justify-content:center;">
-        <div style="font-family:var(--mono);font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--fax-gray);opacity:0.4;text-align:center;padding:2rem;">
-          [ Retro fax machine image ]<br><br>
-          Replace with your<br>vintage office photography
-        </div>
-      </div>
+      <img src="images/hero-terminal.jpg" alt="Woman working at an early computer terminal" loading="lazy">
     </div>
     <div class="concept-content">
       <div class="section-eyebrow reveal">The Experiment</div>
@@ -1183,33 +1282,23 @@
     </div>
     <div class="image-grid">
       <div class="grid-item grid-item-1">
-        <div style="width:100%;height:100%;min-height:300px;background:linear-gradient(135deg,#c9c2b0,#a89e8c);display:flex;align-items:center;justify-content:center;">
-          <span style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,0,0,0.3);">[ Office with multiple monitors ]</span>
-        </div>
-        <div class="grid-caption">The multi-screen hustle, circa 1994</div>
+        <img src="images/hero-multiscreen.jpg" alt="Man surrounded by multiple CRT monitors on the phone" loading="lazy">
+        <div class="grid-caption">The original multitasker, circa 1994</div>
       </div>
       <div class="grid-item grid-item-2">
-        <div style="width:100%;height:100%;min-height:300px;background:linear-gradient(135deg,#b8b0a0,#9e9688);display:flex;align-items:center;justify-content:center;">
-          <span style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,0,0,0.3);">[ Cubicle worker on phone ]</span>
-        </div>
-        <div class="grid-caption">Deep in thought, pre-internet</div>
+        <img src="images/hero-cubicles.jpg" alt="Three workers at early computer terminals in cubicles" loading="lazy">
+        <div class="grid-caption">The open-plan revolution</div>
       </div>
       <div class="grid-item grid-item-3">
-        <div style="width:100%;height:100%;min-height:350px;background:linear-gradient(135deg,#d1c9b8,#b5ad9c);display:flex;align-items:center;justify-content:center;">
-          <span style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,0,0,0.3);">[ Copy room ]</span>
-        </div>
+        <img src="images/hero-copyroom.jpg" alt="Man standing contemplatively by a copy machine" loading="lazy">
         <div class="grid-caption">The original cloud storage</div>
       </div>
       <div class="grid-item grid-item-4">
-        <div style="width:100%;height:100%;min-height:350px;background:linear-gradient(135deg,#c4bca8,#a8a090);display:flex;align-items:center;justify-content:center;">
-          <span style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,0,0,0.3);">[ Woman at typewriter ]</span>
-        </div>
+        <img src="images/hero-typewriter.jpg" alt="Woman at typewriter desk, Wes Anderson aesthetic" loading="lazy">
         <div class="grid-caption">Analog processing power</div>
       </div>
       <div class="grid-item grid-item-5">
-        <div style="width:100%;height:100%;min-height:350px;background:linear-gradient(135deg,#bbb4a4,#9f9888);display:flex;align-items:center;justify-content:center;">
-          <span style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,0,0,0.3);">[ Early computer terminal ]</span>
-        </div>
+        <img src="images/hero-plotter.jpg" alt="Man at computer with large format plotter printing" loading="lazy">
         <div class="grid-caption">When bandwidth meant patience</div>
       </div>
     </div>
