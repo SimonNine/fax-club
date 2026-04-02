@@ -88,7 +88,6 @@
     .td-text { max-width: 350px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .td-actions { white-space: nowrap; }
     .td-actions button { margin-right: 0.2rem; }
-    .td-order { width: 60px; }
     .td-timing { font-size: 0.55rem; color: var(--text-muted); }
 
     .status-badge { display: inline-block; padding: 0.12rem 0.45rem; font-size: 0.48rem; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid; }
@@ -96,9 +95,13 @@
     .status-draft { color: var(--yellow); border-color: rgba(232,183,48,0.3); }
     .status-trashed { color: var(--red); border-color: rgba(207,68,68,0.3); }
 
-    .order-btns { display: flex; flex-direction: column; gap: 1px; }
-    .order-btn { padding: 0.1rem 0.4rem; font-size: 0.55rem; font-family: var(--mono); background: var(--surface-2); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; line-height: 1; }
-    .order-btn:hover { color: var(--text); border-color: var(--text); }
+    /* Drag and drop */
+    .drag-handle { cursor: grab; padding: 0.3rem 0.5rem; color: var(--text-muted); font-size: 0.7rem; user-select: none; display: inline-flex; align-items: center; }
+    .drag-handle:hover { color: var(--text); }
+    .drag-handle:active { cursor: grabbing; }
+    tr.dragging { opacity: 0.4; background: var(--surface-3); }
+    tr.drag-over { border-top: 2px solid var(--accent); }
+    tr.drag-over-below { border-bottom: 2px solid var(--accent); }
 
     .empty-state { text-align: center; padding: 3rem 2rem; color: var(--text-muted); font-size: 0.6rem; letter-spacing: 0.1em; }
 
@@ -193,7 +196,7 @@
         </div>
       </div>
       <table><thead><tr>
-        <th>Quote</th><th>Author</th><th>Status</th><th>Created</th><th>Actions</th>
+        <th style="width:30px"></th><th>Quote</th><th>Author</th><th>Status</th><th>Created</th><th>Actions</th>
       </tr></thead><tbody id="tbTestimonials"></tbody></table>
       <div class="empty-state" id="emptyTestimonials" style="display:none;">No testimonials yet.</div>
     </div>
@@ -209,7 +212,7 @@
         </div>
       </div>
       <table><thead><tr>
-        <th class="td-order">Order</th><th>Excerpt</th><th>Status</th><th>Delay</th><th>Duration</th><th>Actions</th>
+        <th style="width:30px"></th><th>Excerpt</th><th>Status</th><th>Delay</th><th>Duration</th><th>Actions</th>
       </tr></thead><tbody id="tbExcerpts"></tbody></table>
       <div class="empty-state" id="emptyExcerpts" style="display:none;">No excerpts yet.</div>
     </div>
@@ -401,6 +404,11 @@
 
     function renderTestimonials() {
       const data = load(KEYS.testimonials, DEFAULT_TESTIMONIALS);
+      // Ensure order field exists
+      data.forEach((t, i) => { if (t.order == null) t.order = i; });
+      data.sort((a,b) => (a.order??999) - (b.order??999));
+      save(KEYS.testimonials, data);
+
       const pub = data.filter(t=>t.status==='published').length;
       document.getElementById('testimonialsCount').textContent = `${pub} published / ${data.length - pub} drafts`;
       document.getElementById('tcTestimonials').textContent = `(${data.length})`;
@@ -408,8 +416,8 @@
       const empty = document.getElementById('emptyTestimonials');
       if (!data.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
       empty.style.display='none';
-      data.sort((a,b) => new Date(b.created) - new Date(a.created));
-      tbody.innerHTML = data.map(t => `<tr class="${t.status==='draft'?'is-draft':''}">
+      tbody.innerHTML = data.map(t => `<tr class="${t.status==='draft'?'is-draft':''}" draggable="true" data-id="${t.id}" data-type="testimonial">
+        <td><span class="drag-handle" title="Drag to reorder">&#9776;</span></td>
         <td class="td-text" title="${esc(t.quote)}">"${esc(t.quote)}"</td>
         <td>${esc(t.author)}</td>
         <td><span class="status-badge status-${t.status}">${t.status}</span></td>
@@ -419,11 +427,14 @@
           <button class="btn btn-sm btn-danger" onclick="trashItem('testimonial','${t.id}')">Trash</button>
         </td>
       </tr>`).join('');
+      initDragDrop(tbody, 'testimonial');
     }
 
     function renderExcerpts() {
       const data = load(KEYS.excerpts, DEFAULT_EXCERPTS);
       const settings = load(KEYS.settings, DEFAULT_SETTINGS);
+      data.sort((a,b) => (a.order??999) - (b.order??999));
+
       const pub = data.filter(e=>e.status==='published').length;
       document.getElementById('excerptsCount').textContent = `${pub} published / ${data.length - pub} drafts`;
       document.getElementById('tcExcerpts').textContent = `(${data.length})`;
@@ -431,14 +442,8 @@
       const empty = document.getElementById('emptyExcerpts');
       if (!data.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
       empty.style.display='none';
-      data.sort((a,b) => (a.order??999) - (b.order??999));
-      tbody.innerHTML = data.map((e, i) => `<tr class="${e.status==='draft'?'is-draft':''}">
-        <td class="td-order">
-          <div class="order-btns">
-            <button class="order-btn" onclick="moveExcerpt('${e.id}',-1)" ${i===0?'disabled':''}>&#9650;</button>
-            <button class="order-btn" onclick="moveExcerpt('${e.id}',1)" ${i===data.length-1?'disabled':''}>&#9660;</button>
-          </div>
-        </td>
+      tbody.innerHTML = data.map(e => `<tr class="${e.status==='draft'?'is-draft':''}" draggable="true" data-id="${e.id}" data-type="excerpt">
+        <td><span class="drag-handle" title="Drag to reorder">&#9776;</span></td>
         <td class="td-text" title="${esc(e.text)}">"${esc(e.text)}"</td>
         <td><span class="status-badge status-${e.status}">${e.status}</span></td>
         <td class="td-timing">${e.delay ? e.delay+'s' : settings.idleDelay+'s <span style="opacity:0.4">(def)</span>'}</td>
@@ -448,6 +453,7 @@
           <button class="btn btn-sm btn-danger" onclick="trashItem('excerpt','${e.id}')">Trash</button>
         </td>
       </tr>`).join('');
+      initDragDrop(tbody, 'excerpt');
     }
 
     function renderTrash() {
@@ -660,19 +666,78 @@
       showToast('Trash emptied');
     };
 
-    // ==================== EXCERPT ORDERING ====================
-    window.moveExcerpt = function(id, dir) {
-      const data = load(KEYS.excerpts, DEFAULT_EXCERPTS);
-      data.sort((a,b) => (a.order??999) - (b.order??999));
-      const idx = data.findIndex(e => e.id === id);
-      if (idx === -1) return;
-      const newIdx = idx + dir;
-      if (newIdx < 0 || newIdx >= data.length) return;
-      [data[idx], data[newIdx]] = [data[newIdx], data[idx]];
-      data.forEach((e, i) => e.order = i);
-      save(KEYS.excerpts, data);
-      renderExcerpts();
-    };
+    // ==================== DRAG & DROP REORDERING ====================
+    function initDragDrop(tbody, type) {
+      let dragRow = null;
+
+      tbody.querySelectorAll('tr[draggable]').forEach(row => {
+        row.addEventListener('dragstart', e => {
+          dragRow = row;
+          row.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', row.dataset.id);
+        });
+
+        row.addEventListener('dragend', () => {
+          dragRow = null;
+          row.classList.remove('dragging');
+          tbody.querySelectorAll('tr').forEach(r => r.classList.remove('drag-over', 'drag-over-below'));
+        });
+
+        row.addEventListener('dragover', e => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          if (!dragRow || dragRow === row) return;
+          tbody.querySelectorAll('tr').forEach(r => r.classList.remove('drag-over', 'drag-over-below'));
+          const rect = row.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          if (e.clientY < midY) {
+            row.classList.add('drag-over');
+          } else {
+            row.classList.add('drag-over-below');
+          }
+        });
+
+        row.addEventListener('dragleave', () => {
+          row.classList.remove('drag-over', 'drag-over-below');
+        });
+
+        row.addEventListener('drop', e => {
+          e.preventDefault();
+          if (!dragRow || dragRow === row) return;
+
+          const dragId = dragRow.dataset.id;
+          const dropId = row.dataset.id;
+          const rect = row.getBoundingClientRect();
+          const dropBelow = e.clientY > rect.top + rect.height / 2;
+
+          const key = type === 'testimonial' ? KEYS.testimonials : KEYS.excerpts;
+          const defaults = type === 'testimonial' ? DEFAULT_TESTIMONIALS : DEFAULT_EXCERPTS;
+          const data = load(key, defaults);
+          data.sort((a,b) => (a.order??999) - (b.order??999));
+
+          const dragIdx = data.findIndex(d => d.id === dragId);
+          const dropIdx = data.findIndex(d => d.id === dropId);
+          if (dragIdx === -1 || dropIdx === -1) return;
+
+          // Remove dragged item and re-insert at new position
+          const [item] = data.splice(dragIdx, 1);
+          let insertIdx = data.findIndex(d => d.id === dropId);
+          if (dropBelow) insertIdx++;
+          data.splice(insertIdx, 0, item);
+
+          // Re-assign order values
+          data.forEach((d, i) => d.order = i);
+          save(key, data);
+
+          if (type === 'testimonial') renderTestimonials();
+          else renderExcerpts();
+          showToast('Order updated');
+
+          tbody.querySelectorAll('tr').forEach(r => r.classList.remove('drag-over', 'drag-over-below'));
+        });
+      });
+    }
 
     // ==================== APPLY DEFAULT TIMING ====================
     window.applyDefaultTiming = function() {

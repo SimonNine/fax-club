@@ -1458,17 +1458,13 @@
       max-width: 90vw;
     }
 
-    /* The paper that comes out — sits above the machine, overflow hidden at bottom */
+    /* Paper wrap: clips at the bottom so paper emerges upward from the machine slot */
     .fax-paper-wrap {
       width: 260px;
       max-width: 80vw;
       overflow: hidden;
       position: relative;
       z-index: 1;
-      /* Paper slides UP out of the machine, so hide overflow at the bottom */
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
     }
 
     .fax-paper {
@@ -1483,12 +1479,13 @@
       min-height: 200px;
     }
 
+    /* Paper slides UP out of the machine */
     .fax-paper.printing { transform: translateY(0); }
 
-    .fax-paper.falling {
-      transition: transform 0.8s cubic-bezier(0.55, 0.06, 0.68, 0.19), opacity 0.5s ease 0.3s;
-      transform: translateY(-120vh) rotate(-3deg);
-      opacity: 0;
+    /* Paper retracts back DOWN into the machine */
+    .fax-paper.retracting {
+      transition: transform 1.2s cubic-bezier(0.55, 0.06, 0.68, 0.19);
+      transform: translateY(100%);
     }
 
     /* Perforated top edge */
@@ -2324,8 +2321,8 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULTS));
       }
 
-      // Only show published testimonials
-      const published = data.filter(t => t.status === 'published');
+      // Only show published testimonials, respect order
+      const published = data.filter(t => t.status === 'published').sort((a,b) => (a.order??999) - (b.order??999));
       const container = document.getElementById('faxCards');
       if (!container || published.length === 0) return;
 
@@ -2366,9 +2363,9 @@
     }
     // ==================== IDLE FAX MACHINE ====================
     (function idleFax() {
-      const PRINT_ANIM = 2200; // Paper slide-up animation time
-      const FALL_ANIM = 1200;
-      const PAUSE_BETWEEN = 1500;
+      const PRINT_ANIM = 2200;  // Paper slide-up time
+      const RETRACT_ANIM = 1400; // Paper slide-down time
+      const PAUSE_BETWEEN = 1000; // Gap between retract finishing and next print starting
 
       const FALLBACK_EXCERPTS = [
         { text: "We spend our lives being watched, measured, optimised. What happens when you strip all that away and just\u2026 think?", delay: null, duration: null },
@@ -2463,8 +2460,11 @@
         faxPage.textContent = (faxCount + 1);
         faxScreenText.textContent = 'PRINTING';
 
-        faxPaper.classList.remove('falling','printing');
-        void faxPaper.offsetHeight;
+        // Reset: remove all animation classes, force to hidden position
+        faxPaper.classList.remove('retracting', 'printing');
+        void faxPaper.offsetHeight; // force reflow
+
+        // Slide paper UP out of the machine
         faxPaper.classList.add('printing');
         faxCount++;
         excerptIndex++;
@@ -2472,19 +2472,26 @@
 
         const readTime = getDisplayTime();
 
+        // After print animation + display time, retract paper back DOWN into machine
         cycleTimer = setTimeout(() => {
           if (!isActive) return;
           faxScreenText.textContent = 'COMPLETE';
+
+          // Brief pause showing COMPLETE, then retract
           setTimeout(() => {
             if (!isActive) return;
-            faxPaper.classList.add('falling');
+            // Slide paper back DOWN into the machine
+            faxPaper.classList.remove('printing');
+            faxPaper.classList.add('retracting');
             faxScreenText.textContent = 'STANDBY';
+
+            // After retract animation, start next fax
             cycleTimer = setTimeout(() => {
               if (!isActive) return;
               faxScreenText.textContent = 'RECEIVING';
-              setTimeout(() => printFax(), 600);
-            }, FALL_ANIM + PAUSE_BETWEEN);
-          }, 600);
+              setTimeout(() => printFax(), 400);
+            }, RETRACT_ANIM + PAUSE_BETWEEN);
+          }, 500);
         }, PRINT_ANIM + readTime);
       }
 
@@ -2493,7 +2500,7 @@
         clearTimeout(cycleTimer);
         faxToast.classList.remove('show');
         faxIdle.classList.remove('active');
-        faxPaper.classList.remove('printing', 'falling');
+        faxPaper.classList.remove('printing', 'retracting');
         faxLight.classList.remove('on');
         faxScreenText.textContent = 'STANDBY';
         resetIdle();
