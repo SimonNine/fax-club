@@ -1151,49 +1151,294 @@
     .loader {
       position: fixed;
       inset: 0;
-      background: var(--ink);
+      background: #0C0C0B;
       z-index: 10001;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
+      overflow: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
 
-    .loader.done { opacity: 0; visibility: hidden; }
+    .loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
 
-    .loader-text {
+    /* CRT scanlines on loader */
+    .loader::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 1px,
+        rgba(0,255,80,0.015) 1px,
+        rgba(0,255,80,0.015) 2px
+      );
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* CRT flicker */
+    .loader::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0);
+      pointer-events: none;
+      z-index: 3;
+      animation: crtFlicker 0.1s infinite;
+    }
+
+    @keyframes crtFlicker {
+      0% { opacity: 0; }
+      5% { opacity: 0.02; background: rgba(255,255,255,0.02); }
+      10% { opacity: 0; }
+      50% { opacity: 0; }
+      55% { opacity: 0.01; background: rgba(255,255,255,0.01); }
+      60% { opacity: 0; }
+    }
+
+    /* Top-left system log */
+    .loader-log {
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
       font-family: var(--mono);
-      font-size: 0.75rem;
+      font-size: 0.6rem;
+      line-height: 1.8;
+      color: rgba(180,220,180,0.5);
+      z-index: 4;
+      max-width: 400px;
+    }
+
+    .loader-log .log-line {
+      opacity: 0;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .loader-log .log-line.show {
+      opacity: 1;
+      animation: typeIn 0.3s steps(30) forwards;
+    }
+
+    @keyframes typeIn {
+      from { max-width: 0; }
+      to { max-width: 600px; }
+    }
+
+    .log-ok { color: rgba(80,200,80,0.7); }
+    .log-warn { color: rgba(200,180,60,0.6); }
+    .log-accent { color: var(--accent); }
+
+    /* Top-right timestamp */
+    .loader-timestamp {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      color: rgba(180,220,180,0.3);
+      z-index: 4;
+      text-align: right;
+    }
+
+    .loader-timestamp .ts-line {
+      opacity: 0;
+    }
+
+    .loader-timestamp .ts-line.show { opacity: 1; }
+
+    /* Centre content */
+    .loader-centre {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 4;
+    }
+
+    .loader-title {
+      font-family: var(--mono);
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 700;
       letter-spacing: 0.3em;
       text-transform: uppercase;
+      color: rgba(240,235,224,0.9);
+      margin-bottom: 1rem;
+      opacity: 0;
+    }
+
+    .loader-title.show {
+      animation: glitchIn 0.6s ease forwards;
+    }
+
+    @keyframes glitchIn {
+      0% { opacity: 0; transform: translateX(-10px); filter: blur(4px); }
+      20% { opacity: 0.7; transform: translateX(5px); filter: blur(0); }
+      25% { opacity: 0.3; transform: translateX(-3px) skewX(-2deg); }
+      30% { opacity: 1; transform: translateX(2px) skewX(1deg); }
+      40% { opacity: 0.8; transform: translateX(-1px) skewX(0); }
+      100% { opacity: 1; transform: translateX(0); filter: blur(0); }
+    }
+
+    .loader-subtitle {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
       color: var(--accent);
+      opacity: 0;
+      margin-bottom: 2.5rem;
     }
 
-    .loader-text span {
-      display: inline-block;
-      animation: pulse 1.5s ease infinite;
+    .loader-subtitle.show {
+      animation: fadeIn 0.4s ease forwards;
     }
 
-    .loader-text span:nth-child(2) { animation-delay: 0.08s; }
-    .loader-text span:nth-child(3) { animation-delay: 0.16s; }
-    .loader-text span:nth-child(4) { animation-delay: 0.24s; }
-    .loader-text span:nth-child(5) { animation-delay: 0.32s; }
-    .loader-text span:nth-child(6) { animation-delay: 0.40s; }
-    .loader-text span:nth-child(7) { animation-delay: 0.48s; }
-    .loader-text span:nth-child(8) { animation-delay: 0.56s; }
-    .loader-text span:nth-child(9) { animation-delay: 0.64s; }
-    .loader-text span:nth-child(10) { animation-delay: 0.72s; }
-    .loader-text span:nth-child(11) { animation-delay: 0.80s; }
-    .loader-text span:nth-child(12) { animation-delay: 0.88s; }
+    .loader-status {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(180,220,180,0.6);
+      opacity: 0;
+    }
 
-    @keyframes pulse { 0%, 100% { opacity: 0.15; } 50% { opacity: 1; } }
+    .loader-status.show { opacity: 1; }
+
+    .loader-status .blink {
+      animation: blink 0.6s step-end infinite;
+    }
+
+    /* Progress bar */
+    .loader-progress {
+      width: 200px;
+      height: 2px;
+      background: rgba(255,255,255,0.06);
+      margin: 1.5rem auto 0;
+      overflow: hidden;
+      opacity: 0;
+    }
+
+    .loader-progress.show { opacity: 1; }
+
+    .loader-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    /* Bottom left coords */
+    .loader-coords {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+      font-family: var(--mono);
+      font-size: 0.5rem;
+      color: rgba(180,220,180,0.2);
+      z-index: 4;
+    }
+
+    /* Bottom right */
+    .loader-version {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      font-family: var(--mono);
+      font-size: 0.5rem;
+      color: rgba(180,220,180,0.2);
+      z-index: 4;
+    }
+
+    /* Glitch exit */
+    .loader.glitch-out {
+      animation: glitchExit 0.4s ease forwards;
+    }
+
+    @keyframes glitchExit {
+      0% { transform: translateX(0); filter: brightness(1); }
+      15% { transform: translateX(-8px) skewX(-3deg); filter: brightness(1.5) saturate(0); }
+      30% { transform: translateX(5px) skewX(2deg); filter: brightness(0.8); }
+      45% { transform: translateX(-3px); filter: brightness(2) saturate(0); }
+      60% { transform: translateX(0); filter: brightness(1); }
+      100% { transform: translateX(0); filter: brightness(1); }
+    }
+
+    /* Horizontal glitch bars */
+    .loader .glitch-bar {
+      position: absolute;
+      left: 0; right: 0;
+      height: 2px;
+      background: rgba(255,255,255,0.15);
+      z-index: 5;
+      opacity: 0;
+      transform: scaleX(0);
+    }
+
+    .loader .glitch-bar.flash {
+      opacity: 1;
+      animation: glitchBar 0.15s ease forwards;
+    }
+
+    @keyframes glitchBar {
+      0% { transform: scaleX(0); opacity: 1; }
+      50% { transform: scaleX(1); opacity: 0.8; }
+      100% { transform: scaleX(0); opacity: 0; }
+    }
+
+    @media (max-width: 768px) {
+      .loader-log { top: 1.5rem; left: 1.5rem; font-size: 0.5rem; }
+      .loader-timestamp { top: 1.5rem; right: 1.5rem; font-size: 0.48rem; }
+      .loader-title { font-size: 1.4rem; letter-spacing: 0.2em; }
+      .loader-coords { bottom: 1.5rem; left: 1.5rem; }
+      .loader-version { bottom: 1.5rem; right: 1.5rem; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Loader -->
+  <!-- Loader: Fax Transmission Boot Sequence -->
   <div class="loader" id="loader">
-    <div class="loader-text"><span>T</span><span>R</span><span>A</span><span>N</span><span>S</span><span>M</span><span>I</span><span>T</span><span>T</span><span>I</span><span>N</span><span>G</span></div>
+    <!-- Glitch bars -->
+    <div class="glitch-bar" style="top:18%"></div>
+    <div class="glitch-bar" style="top:34%"></div>
+    <div class="glitch-bar" style="top:52%"></div>
+    <div class="glitch-bar" style="top:71%"></div>
+    <div class="glitch-bar" style="top:88%"></div>
+
+    <!-- Top left: system log -->
+    <div class="loader-log" id="loaderLog">
+      <div class="log-line">> INITIALIZING FAX PROTOCOL v4.2.1</div>
+      <div class="log-line">> DIALING SECURE LINE... <span class="log-ok">[CONNECTED]</span></div>
+      <div class="log-line">> HANDSHAKE ESTABLISHED &mdash; 9600 BAUD</div>
+      <div class="log-line">> VERIFYING SENDER: <span class="log-warn">ANONYMOUS</span></div>
+      <div class="log-line">> DECRYPTING TRANSMISSION HEADER...</div>
+      <div class="log-line">> LOADING DOCUMENT: <span class="log-accent">THE FAX CLUB EXPERIMENT</span></div>
+      <div class="log-line">> PAGES RECEIVED: 52/52 <span class="log-ok">[COMPLETE]</span></div>
+      <div class="log-line">> RENDERING OUTPUT...</div>
+    </div>
+
+    <!-- Top right: timestamps -->
+    <div class="loader-timestamp" id="loaderTimestamp">
+      <div class="ts-line">SYS.TIME // <span id="tsTime">--:--:--</span></div>
+      <div class="ts-line">PROTOCOL // FAX-CLUB-EXP</div>
+      <div class="ts-line">FREQ // 1667 Hz</div>
+      <div class="ts-line">STATUS // <span id="tsStatus">STANDBY</span></div>
+    </div>
+
+    <!-- Centre -->
+    <div class="loader-centre">
+      <div class="loader-title" id="loaderTitle">FAX CLUB</div>
+      <div class="loader-subtitle" id="loaderSubtitle">INCOMING TRANSMISSION</div>
+      <div class="loader-status" id="loaderStatus">RECEIVING<span class="blink">_</span></div>
+      <div class="loader-progress" id="loaderProgress">
+        <div class="loader-progress-bar" id="loaderBar"></div>
+      </div>
+    </div>
+
+    <!-- Bottom corners -->
+    <div class="loader-coords">LON 51.5074&deg;N // FREQ 1667Hz</div>
+    <div class="loader-version">FAX-OS v4.2.1 // 2026</div>
   </div>
 
   <div class="grain"></div>
@@ -1481,8 +1726,80 @@
   </footer>
 
   <script>
-    // ==================== LOADER ====================
-    window.addEventListener('load', () => setTimeout(() => document.getElementById('loader').classList.add('done'), 1200));
+    // ==================== LOADER: FAX BOOT SEQUENCE ====================
+    (function bootSequence() {
+      const loader = document.getElementById('loader');
+      const logLines = document.querySelectorAll('#loaderLog .log-line');
+      const tsLines = document.querySelectorAll('#loaderTimestamp .ts-line');
+      const title = document.getElementById('loaderTitle');
+      const subtitle = document.getElementById('loaderSubtitle');
+      const status = document.getElementById('loaderStatus');
+      const progress = document.getElementById('loaderProgress');
+      const bar = document.getElementById('loaderBar');
+      const tsTime = document.getElementById('tsTime');
+      const tsStatus = document.getElementById('tsStatus');
+      const glitchBars = loader.querySelectorAll('.glitch-bar');
+
+      // Live clock
+      function updateClock() {
+        const now = new Date();
+        tsTime.textContent = now.toTimeString().slice(0, 8);
+      }
+      const clockInterval = setInterval(updateClock, 100);
+      updateClock();
+
+      // Random glitch bar flashes
+      function flashGlitch() {
+        const bar = glitchBars[Math.floor(Math.random() * glitchBars.length)];
+        bar.classList.add('flash');
+        setTimeout(() => bar.classList.remove('flash'), 200);
+      }
+      const glitchInterval = setInterval(flashGlitch, 400);
+
+      // Sequence timeline
+      const timeline = [
+        // Show timestamps
+        { t: 100, fn: () => tsLines.forEach((l, i) => setTimeout(() => l.classList.add('show'), i * 120)) },
+        // Log lines appear one by one
+        { t: 300, fn: () => logLines[0].classList.add('show') },
+        { t: 700, fn: () => logLines[1].classList.add('show') },
+        // Title glitches in
+        { t: 900, fn: () => title.classList.add('show') },
+        { t: 1100, fn: () => logLines[2].classList.add('show') },
+        { t: 1300, fn: () => subtitle.classList.add('show') },
+        { t: 1400, fn: () => logLines[3].classList.add('show') },
+        { t: 1600, fn: () => { logLines[4].classList.add('show'); tsStatus.textContent = 'RECEIVING'; } },
+        // Show progress
+        { t: 1800, fn: () => { status.classList.add('show'); progress.classList.add('show'); } },
+        { t: 1900, fn: () => { bar.style.width = '15%'; logLines[5].classList.add('show'); } },
+        { t: 2100, fn: () => bar.style.width = '35%' },
+        { t: 2400, fn: () => { bar.style.width = '60%'; logLines[6].classList.add('show'); } },
+        { t: 2700, fn: () => bar.style.width = '85%' },
+        { t: 2900, fn: () => { bar.style.width = '100%'; logLines[7].classList.add('show'); tsStatus.textContent = 'COMPLETE'; } },
+        // Glitch out and reveal page
+        { t: 3300, fn: () => {
+          clearInterval(glitchInterval);
+          clearInterval(clockInterval);
+          // Rapid glitch bars
+          glitchBars.forEach((b, i) => {
+            setTimeout(() => b.classList.add('flash'), i * 40);
+          });
+          loader.classList.add('glitch-out');
+        }},
+        { t: 3700, fn: () => loader.classList.add('done') },
+      ];
+
+      // Only run full sequence on first visit per session
+      if (sessionStorage.getItem('faxclub-loaded')) {
+        loader.classList.add('done');
+        clearInterval(clockInterval);
+        clearInterval(glitchInterval);
+        return;
+      }
+
+      timeline.forEach(({ t, fn }) => setTimeout(fn, t));
+      sessionStorage.setItem('faxclub-loaded', '1');
+    })();
 
     // ==================== THEME TOGGLE ====================
     const html = document.documentElement;
