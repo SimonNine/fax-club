@@ -384,8 +384,11 @@
 
     .full-image img {
       width: 100%;
-      height: 100%;
+      height: 120%;
       object-fit: cover;
+      position: absolute;
+      top: -10%;
+      left: 0;
       filter: sepia(20%) contrast(1.05) brightness(0.88) saturate(0.85);
       transition: filter 0.6s ease;
     }
@@ -415,7 +418,6 @@
     /* Parallax scroll effect on full images */
     .parallax-img {
       will-change: transform;
-      transition: transform 0.1s linear;
     }
 
     /* ==================== SECTION: BOOK SHOWCASE ==================== */
@@ -1629,27 +1631,8 @@
       <div class="eyebrow">Incoming Transmissions</div>
       <h2 class="section-title" style="color:var(--bg);">What readers are saying.</h2>
     </div>
-    <div class="fax-cards">
-      <div class="fax-card">
-        <div class="fax-card-text">"Thought-provoking, challenges your values, difficult to put down. This isn't just a book &mdash; it's a mirror."</div>
-        <div class="fax-card-author">Kindle Customer</div>
-      </div>
-      <div class="fax-card">
-        <div class="fax-card-text">"Outstanding idea. Brilliant thought provoking read. The kind of thing the world needs more of right now."</div>
-        <div class="fax-card-author">Rob Robson</div>
-      </div>
-      <div class="fax-card">
-        <div class="fax-card-text">"Fun and inspiring. Easy to pick up. Easy to love. Hard to forget."</div>
-        <div class="fax-card-author">Girl with a Book</div>
-      </div>
-      <div class="fax-card">
-        <div class="fax-card-text">"Essential reading for anyone in a position of influence. If you lead people, read this."</div>
-        <div class="fax-card-author">Tom Kingsley</div>
-      </div>
-      <div class="fax-card">
-        <div class="fax-card-text">"32 voices thinking aloud &mdash; non-polished, non-filtered. Refreshingly real in a world of hot takes."</div>
-        <div class="fax-card-author">Amazon Customer</div>
-      </div>
+    <div class="fax-cards" id="faxCards">
+      <!-- Populated dynamically from localStorage -->
     </div>
   </section>
 
@@ -1899,10 +1882,17 @@
     const parallaxImages = document.querySelectorAll('.parallax-img');
     window.addEventListener('scroll', () => {
       parallaxImages.forEach(img => {
-        const rect = img.parentElement.getBoundingClientRect();
-        const speed = 0.15;
-        const offset = (rect.top * speed);
-        img.style.transform = `translateY(${offset}px) scale(1.08)`;
+        const container = img.parentElement;
+        const rect = container.getBoundingClientRect();
+        const winH = window.innerHeight;
+        // Only animate when in view
+        if (rect.bottom < 0 || rect.top > winH) return;
+        // Map position to -1 (top of viewport) to 1 (bottom)
+        const progress = (rect.top + rect.height / 2) / winH;
+        // Shift within the 20% overflow (10% each side)
+        const maxShift = rect.height * 0.1;
+        const offset = (progress - 0.5) * maxShift * 2;
+        img.style.transform = `translateY(${offset}px)`;
       });
     }, { passive: true });
 
@@ -1918,6 +1908,39 @@
       });
       hc.addEventListener('mouseleave', () => { if (h1) h1.style.transform = ''; });
     }
+
+    // ==================== LOAD TESTIMONIALS FROM LOCALSTORAGE ====================
+    (function loadTestimonials() {
+      const STORAGE_KEY = 'faxclub-testimonials';
+      const DEFAULTS = [
+        { id: '1', quote: 'Thought-provoking, challenges your values, difficult to put down. This isn\u2019t just a book \u2014 it\u2019s a mirror.', author: 'Kindle Customer', status: 'published', created: '2025-12-01T10:00:00Z', updated: '2025-12-01T10:00:00Z' },
+        { id: '2', quote: 'Outstanding idea. Brilliant thought provoking read. The kind of thing the world needs more of right now.', author: 'Rob Robson', status: 'published', created: '2025-12-05T14:30:00Z', updated: '2025-12-05T14:30:00Z' },
+        { id: '3', quote: 'Fun and inspiring. Easy to pick up. Easy to love. Hard to forget.', author: 'Girl with a Book', status: 'published', created: '2025-12-10T09:15:00Z', updated: '2025-12-10T09:15:00Z' },
+        { id: '4', quote: 'Essential reading for anyone in a position of influence. If you lead people, read this.', author: 'Tom Kingsley', status: 'published', created: '2025-12-18T16:00:00Z', updated: '2025-12-18T16:00:00Z' },
+        { id: '5', quote: '32 voices thinking aloud \u2014 non-polished, non-filtered. Refreshingly real in a world of hot takes.', author: 'Amazon Customer', status: 'published', created: '2026-01-03T11:45:00Z', updated: '2026-01-03T11:45:00Z' },
+      ];
+
+      let data;
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        data = JSON.parse(raw);
+      } else {
+        data = DEFAULTS;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULTS));
+      }
+
+      // Only show published testimonials
+      const published = data.filter(t => t.status === 'published');
+      const container = document.getElementById('faxCards');
+      if (!container || published.length === 0) return;
+
+      container.innerHTML = published.map(t => `
+        <div class="fax-card">
+          <div class="fax-card-text">\u201C${t.quote}\u201D</div>
+          <div class="fax-card-author">${t.author}</div>
+        </div>
+      `).join('');
+    })();
 
     // ==================== FAX CARD AUTO-SCROLL ====================
     const cards = document.querySelector('.fax-cards');
