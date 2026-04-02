@@ -2366,21 +2366,30 @@
     }
     // ==================== IDLE FAX MACHINE ====================
     (function idleFax() {
-      const IDLE_TIME = 5000;
-      const PRINT_DURATION = 2200;
-      const READ_DURATION = 5000;
-      const FALL_DURATION = 1200;
+      const PRINT_ANIM = 2200; // Paper slide-up animation time
+      const FALL_ANIM = 1200;
       const PAUSE_BETWEEN = 1500;
 
-      const excerpts = [
-        "We spend our lives being watched, measured, optimised. What happens when you strip all that away and just\u2026 think? Something strange. Something honest. Something the algorithm can\u2019t predict.",
-        "The fax machine doesn\u2019t care who you are. It doesn\u2019t know your follower count. It just receives the signal and prints the truth, one page at a time.",
-        "Week 17. The question was simple: \u2018What are you afraid to say out loud?\u2019 Nobody held back. When you\u2019re anonymous, courage comes easier.",
-        "One hundred strangers agreed to think deeply for a year. No names. No faces. No likes. Just questions, answers, and the space between them.",
-        "The best ideas don\u2019t arrive on screens. They arrive on paper, in silence, when nobody\u2019s performing for an audience that doesn\u2019t exist.",
-        "Week 34. Someone wrote: \u2018I\u2019ve spent my whole career building things that make people scroll faster. This is the first thing that made me stop.\u2019",
-        "Somewhere between the dial tone and the printout, something human survived. This book is the proof.",
+      const FALLBACK_EXCERPTS = [
+        { text: "We spend our lives being watched, measured, optimised. What happens when you strip all that away and just\u2026 think?", delay: null, duration: null },
+        { text: "The fax machine doesn\u2019t care who you are. It just receives the signal and prints the truth, one page at a time.", delay: null, duration: null },
+        { text: "One hundred strangers agreed to think deeply for a year. No names. No faces. No likes. Just questions, answers, and the space between them.", delay: null, duration: null },
       ];
+
+      function getSettings() {
+        try { const s = JSON.parse(localStorage.getItem('faxclub-settings')); return s || { idleDelay: 5, displayDuration: 7 }; }
+        catch { return { idleDelay: 5, displayDuration: 7 }; }
+      }
+
+      function getExcerpts() {
+        try {
+          const raw = localStorage.getItem('faxclub-excerpts');
+          if (!raw) return FALLBACK_EXCERPTS;
+          const all = JSON.parse(raw);
+          const published = all.filter(e => e.status === 'published').sort((a,b) => (a.order??999) - (b.order??999));
+          return published.length ? published : FALLBACK_EXCERPTS;
+        } catch { return FALLBACK_EXCERPTS; }
+      }
 
       const faxIdle = document.getElementById('faxIdle');
       const faxToast = document.getElementById('faxToast');
@@ -2399,87 +2408,84 @@
       let cycleTimer = null;
       let loaderDone = false;
 
-      // Don't start idle detection until loader is done
       setTimeout(() => { loaderDone = true; resetIdle(); }, 4000);
+
+      function getIdleTime() {
+        const excerpts = getExcerpts();
+        const current = excerpts[excerptIndex % excerpts.length];
+        const settings = getSettings();
+        return ((current && current.delay) || settings.idleDelay) * 1000;
+      }
+
+      function getDisplayTime() {
+        const excerpts = getExcerpts();
+        const idx = (excerptIndex - 1 + excerpts.length) % excerpts.length;
+        const current = excerpts[idx];
+        const settings = getSettings();
+        return ((current && current.duration) || settings.displayDuration) * 1000;
+      }
 
       function resetIdle() {
         if (!loaderDone) return;
         clearTimeout(idleTimer);
         if (isActive) return;
-        idleTimer = setTimeout(startFax, IDLE_TIME);
+        idleTimer = setTimeout(startFax, getIdleTime());
       }
 
-      // Track all interaction
       ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'touchmove'].forEach(evt => {
         document.addEventListener(evt, () => {
-          if (isActive) {
-            dismissFax();
-          } else {
-            resetIdle();
-          }
+          if (isActive) dismissFax();
+          else resetIdle();
         }, { passive: true });
       });
 
       function startFax() {
         if (isActive) return;
         isActive = true;
-
-        // Show toast first
         faxToast.classList.add('show');
         faxScreenText.textContent = 'RECEIVING';
         faxLight.classList.add('on');
-
         setTimeout(() => {
           faxToast.classList.remove('show');
-          // Show the overlay
           faxIdle.classList.add('active');
-          // Start printing cycle
           setTimeout(() => printFax(), 400);
         }, 1200);
       }
 
       function printFax() {
         if (!isActive) return;
+        const excerpts = getExcerpts();
+        const current = excerpts[excerptIndex % excerpts.length];
 
-        // Update content
-        const now = new Date();
-        faxDate.textContent = now.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
-          ' \u2014 ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-        faxExcerpt.textContent = excerpts[excerptIndex % excerpts.length];
+        const d = new Date();
+        faxDate.textContent = d.toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' \u2014 ' + d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+        faxExcerpt.textContent = current.text;
         faxPage.textContent = (faxCount + 1);
         faxScreenText.textContent = 'PRINTING';
 
-        // Reset paper state
-        faxPaper.classList.remove('falling');
-        faxPaper.classList.remove('printing');
-        // Force reflow
+        faxPaper.classList.remove('falling','printing');
         void faxPaper.offsetHeight;
-
-        // Print it
         faxPaper.classList.add('printing');
         faxCount++;
         excerptIndex++;
         faxCounter.textContent = 'FAXES RECEIVED: ' + String(faxCount).padStart(3, '0');
 
-        // After reading time, drop the paper
+        const readTime = getDisplayTime();
+
         cycleTimer = setTimeout(() => {
           if (!isActive) return;
           faxScreenText.textContent = 'COMPLETE';
-
           setTimeout(() => {
             if (!isActive) return;
             faxPaper.classList.add('falling');
             faxScreenText.textContent = 'STANDBY';
-
-            // After fall, print next one
             cycleTimer = setTimeout(() => {
               if (!isActive) return;
               faxScreenText.textContent = 'RECEIVING';
               setTimeout(() => printFax(), 600);
-            }, FALL_DURATION + PAUSE_BETWEEN);
+            }, FALL_ANIM + PAUSE_BETWEEN);
           }, 600);
-
-        }, PRINT_DURATION + READ_DURATION);
+        }, PRINT_ANIM + readTime);
       }
 
       function dismissFax() {

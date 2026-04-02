@@ -9,11 +9,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     :root {
       --bg: #0E0E0D;
       --surface: #161615;
       --surface-2: #1E1E1C;
+      --surface-3: #252523;
       --border: rgba(255,255,255,0.06);
       --border-active: rgba(255,255,255,0.12);
       --text: #E8E3D8;
@@ -25,388 +25,132 @@
       --red: #CF4444;
       --mono: 'Space Mono', monospace;
     }
-
-    body {
-      font-family: var(--mono);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      font-size: 0.8rem;
-    }
+    body { font-family: var(--mono); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 0.78rem; }
 
     /* ==================== LOGIN ==================== */
-    .login-screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .login-screen::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255,255,255,0.008) 1px, rgba(255,255,255,0.008) 2px);
-      pointer-events: none;
-    }
-
-    .login-box {
-      width: 360px;
-      max-width: 90vw;
-      padding: 2.5rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-    }
-
-    .login-box h1 {
-      font-size: 0.7rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.3rem;
-    }
-
-    .login-box .login-sub {
-      font-size: 0.55rem;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
-      margin-bottom: 2rem;
-    }
-
-    .login-box label {
-      display: block;
-      font-size: 0.55rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 0.4rem;
-    }
-
-    .login-box input {
-      width: 100%;
-      padding: 0.7rem 0.8rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      outline: none;
-      margin-bottom: 1.2rem;
-      transition: border-color 0.2s;
-    }
-
+    .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; }
+    .login-screen::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255,255,255,0.008) 1px, rgba(255,255,255,0.008) 2px); pointer-events: none; }
+    .login-box { width: 360px; max-width: 90vw; padding: 2.5rem; background: var(--surface); border: 1px solid var(--border); }
+    .login-box h1 { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.3rem; }
+    .login-box .login-sub { font-size: 0.55rem; color: var(--text-muted); letter-spacing: 0.1em; margin-bottom: 2rem; }
+    .login-box label { display: block; font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem; }
+    .login-box input { width: 100%; padding: 0.7rem 0.8rem; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: var(--mono); font-size: 0.75rem; outline: none; margin-bottom: 1.2rem; transition: border-color 0.2s; }
     .login-box input:focus { border-color: var(--accent); }
-
-    .login-error {
-      font-size: 0.6rem;
-      color: var(--red);
-      margin-bottom: 1rem;
-      display: none;
-    }
-
+    .login-error { font-size: 0.6rem; color: var(--red); margin-bottom: 1rem; display: none; }
     .login-error.show { display: block; }
-
-    .login-btn {
-      width: 100%;
-      padding: 0.75rem;
-      background: var(--accent);
-      color: var(--bg);
-      border: none;
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
+    .login-btn { width: 100%; padding: 0.75rem; background: var(--accent); color: var(--bg); border: none; font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
     .login-btn:hover { background: var(--accent-hover); }
 
     /* ==================== ADMIN SHELL ==================== */
-    .admin { display: none; min-height: 100vh; }
-    .admin.active { display: flex; flex-direction: column; }
+    .admin { display: none; min-height: 100vh; flex-direction: column; }
+    .admin.active { display: flex; }
 
-    .admin-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--surface);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 2rem; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 10; }
+    .admin-header-left { display: flex; align-items: center; gap: 1.5rem; }
+    .admin-logo { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+    .admin-badge { font-size: 0.48rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding: 0.2rem 0.5rem; border: 1px solid var(--border); }
+    .admin-header-right { display: flex; gap: 0.8rem; align-items: center; }
 
-    .admin-header-left {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
+    /* Tabs */
+    .tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--surface); padding: 0 2rem; }
+    .tab { padding: 0.7rem 1.2rem; font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; position: relative; }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab .tab-count { font-size: 0.45rem; color: var(--text-muted); margin-left: 0.3rem; }
 
-    .admin-logo {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
+    .tab-panel { display: none; flex: 1; padding: 1.5rem 2rem; max-width: 1100px; width: 100%; margin: 0 auto; }
+    .tab-panel.active { display: block; }
 
-    .admin-badge {
-      font-size: 0.5rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      padding: 0.25rem 0.6rem;
-      border: 1px solid var(--border);
-    }
-
-    .admin-header-right { display: flex; gap: 1rem; align-items: center; }
-
-    .btn {
-      padding: 0.5rem 1rem;
-      font-family: var(--mono);
-      font-size: 0.6rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
+    /* ==================== BUTTONS ==================== */
+    .btn { padding: 0.45rem 0.9rem; font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; border: none; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
     .btn-accent { background: var(--accent); color: var(--bg); }
     .btn-accent:hover { background: var(--accent-hover); }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-    }
-
+    .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
     .btn-ghost:hover { border-color: var(--text); color: var(--text); }
+    .btn-danger { background: transparent; color: var(--red); border: 1px solid rgba(207,68,68,0.3); }
+    .btn-danger:hover { background: var(--red); color: white; }
+    .btn-success { background: var(--green); color: white; }
+    .btn-success:hover { background: #43A047; }
+    .btn-sm { padding: 0.3rem 0.6rem; font-size: 0.5rem; }
 
-    .btn-danger { background: var(--red); color: white; }
-    .btn-danger:hover { background: #B83A3A; }
+    /* ==================== TOOLBAR ==================== */
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.8rem; }
+    .toolbar h2 { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); }
+    .toolbar-right { display: flex; gap: 0.5rem; align-items: center; }
+    .count-label { font-size: 0.5rem; color: var(--text-muted); letter-spacing: 0.08em; }
 
     /* ==================== TABLE ==================== */
-    .admin-body { flex: 1; padding: 2rem; max-width: 1100px; width: 100%; margin: 0 auto; }
-
-    .admin-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .admin-toolbar h2 {
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    .admin-count {
-      font-size: 0.55rem;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th {
-      text-align: left;
-      font-size: 0.5rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      padding: 0.8rem 1rem;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      user-select: none;
-    }
-
-    th:hover { color: var(--text); }
-
-    td {
-      padding: 0.8rem 1rem;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.7rem;
-      vertical-align: top;
-    }
-
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-size: 0.48rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border); user-select: none; }
+    td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border); font-size: 0.68rem; vertical-align: middle; }
     tr:hover { background: var(--surface-2); }
+    tr.is-draft td:not(.td-actions) { opacity: 0.45; }
+    .td-text { max-width: 350px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .td-actions { white-space: nowrap; }
+    .td-actions button { margin-right: 0.2rem; }
+    .td-order { width: 60px; }
+    .td-timing { font-size: 0.55rem; color: var(--text-muted); }
 
-    tr.draft td { opacity: 0.5; }
-
-    .status-badge {
-      display: inline-block;
-      padding: 0.15rem 0.5rem;
-      font-size: 0.5rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      border: 1px solid;
-    }
-
+    .status-badge { display: inline-block; padding: 0.12rem 0.45rem; font-size: 0.48rem; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid; }
     .status-published { color: var(--green); border-color: rgba(76,175,80,0.3); }
     .status-draft { color: var(--yellow); border-color: rgba(232,183,48,0.3); }
+    .status-trashed { color: var(--red); border-color: rgba(207,68,68,0.3); }
 
-    .td-quote {
-      max-width: 400px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+    .order-btns { display: flex; flex-direction: column; gap: 1px; }
+    .order-btn { padding: 0.1rem 0.4rem; font-size: 0.55rem; font-family: var(--mono); background: var(--surface-2); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; line-height: 1; }
+    .order-btn:hover { color: var(--text); border-color: var(--text); }
 
-    .td-actions { white-space: nowrap; }
+    .empty-state { text-align: center; padding: 3rem 2rem; color: var(--text-muted); font-size: 0.6rem; letter-spacing: 0.1em; }
 
-    .td-actions button {
-      padding: 0.3rem 0.6rem;
-      font-family: var(--mono);
-      font-size: 0.5rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      background: transparent;
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-right: 0.3rem;
-    }
-
-    .td-actions button:hover { color: var(--text); border-color: var(--text); }
-    .td-actions button.del:hover { color: var(--red); border-color: var(--red); }
-
-    .empty-state {
-      text-align: center;
-      padding: 4rem 2rem;
-      color: var(--text-muted);
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-    }
+    /* ==================== SETTINGS PANEL ==================== */
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 600px; }
+    .setting-card { background: var(--surface); border: 1px solid var(--border); padding: 1.2rem; }
+    .setting-card h4 { font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.8rem; }
+    .setting-card p { font-size: 0.5rem; color: var(--text-muted); margin-bottom: 0.8rem; line-height: 1.6; }
+    .setting-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem; }
+    .setting-row label { font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); min-width: 100px; }
+    .setting-row input { width: 80px; padding: 0.4rem 0.5rem; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: var(--mono); font-size: 0.65rem; outline: none; text-align: center; }
+    .setting-row input:focus { border-color: var(--accent); }
+    .setting-row .unit { font-size: 0.5rem; color: var(--text-muted); }
 
     /* ==================== MODAL ==================== */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(4px);
-      z-index: 100;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 100; display: none; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
-
-    .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      width: 500px;
-      max-width: 92vw;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 2rem;
-    }
-
-    .modal h3 {
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 1.5rem;
-    }
-
-    .field { margin-bottom: 1.2rem; }
-
-    .field label {
-      display: block;
-      font-size: 0.5rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 0.3rem;
-    }
-
-    .field input,
-    .field textarea,
-    .field select {
-      width: 100%;
-      padding: 0.6rem 0.8rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .field input:focus,
-    .field textarea:focus,
-    .field select:focus { border-color: var(--accent); }
-
-    .field textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
-
+    .modal { background: var(--surface); border: 1px solid var(--border); width: 520px; max-width: 92vw; max-height: 90vh; overflow-y: auto; padding: 1.8rem; }
+    .modal h3 { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.3rem; }
+    .field { margin-bottom: 1rem; }
+    .field label { display: block; font-size: 0.48rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.3rem; }
+    .field input, .field textarea, .field select { width: 100%; padding: 0.55rem 0.7rem; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: var(--mono); font-size: 0.68rem; outline: none; transition: border-color 0.2s; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); }
+    .field textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
     .field select { cursor: pointer; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    .field .field-hint { font-size: 0.45rem; color: var(--text-muted); margin-top: 0.2rem; }
+    .modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.3rem; padding-top: 1.2rem; border-top: 1px solid var(--border); }
 
-    .modal-actions {
-      display: flex;
-      gap: 0.5rem;
-      justify-content: flex-end;
-      margin-top: 1.5rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
-    }
-
-    /* ==================== CONFIRM DIALOG ==================== */
-    .confirm-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 200;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-
+    /* ==================== CONFIRM ==================== */
+    .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: none; align-items: center; justify-content: center; }
     .confirm-overlay.open { display: flex; }
+    .confirm-box { background: var(--surface); border: 1px solid var(--border); padding: 1.8rem; width: 380px; max-width: 90vw; text-align: center; }
+    .confirm-box p { font-size: 0.68rem; margin-bottom: 1.3rem; line-height: 1.6; }
+    .confirm-actions { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
 
-    .confirm-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 2rem;
-      width: 380px;
-      max-width: 90vw;
-      text-align: center;
-    }
+    /* ==================== TOAST ==================== */
+    .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; padding: 0.6rem 1.2rem; background: var(--surface-3); border: 1px solid var(--border); font-size: 0.58rem; color: var(--green); z-index: 300; opacity: 0; transform: translateY(10px); transition: all 0.3s ease; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateY(0); }
 
-    .confirm-box p {
-      font-size: 0.7rem;
-      margin-bottom: 1.5rem;
-      line-height: 1.6;
-      color: var(--text);
-    }
-
-    .confirm-actions { display: flex; gap: 0.5rem; justify-content: center; }
-
-    /* ==================== RESPONSIVE ==================== */
     @media (max-width: 768px) {
-      .admin-body { padding: 1rem; }
-      .admin-header { padding: 0.8rem 1rem; }
-      td, th { padding: 0.6rem 0.5rem; font-size: 0.6rem; }
-      .td-quote { max-width: 180px; }
+      .tabs { padding: 0 1rem; overflow-x: auto; }
+      .tab-panel { padding: 1rem; }
+      .admin-header { padding: 0.6rem 1rem; }
+      td, th { padding: 0.5rem 0.4rem; font-size: 0.6rem; }
+      .td-text { max-width: 160px; }
+      .settings-grid { grid-template-columns: 1fr; }
+      .field-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-
   <!-- LOGIN -->
   <div class="login-screen" id="loginScreen">
     <div class="login-box">
@@ -427,52 +171,134 @@
         <div class="admin-badge">Admin Console</div>
       </div>
       <div class="admin-header-right">
-        <span class="admin-count" id="countLabel"></span>
-        <button class="btn btn-accent" id="addBtn">+ New Testimonial</button>
+        <a href="../" class="btn btn-ghost" style="text-decoration:none;">View Site</a>
         <button class="btn btn-ghost" id="logoutBtn">Logout</button>
       </div>
     </header>
 
-    <div class="admin-body">
-      <div class="admin-toolbar">
+    <div class="tabs">
+      <button class="tab active" data-tab="testimonials">Testimonials <span class="tab-count" id="tcTestimonials"></span></button>
+      <button class="tab" data-tab="excerpts">Fax Excerpts <span class="tab-count" id="tcExcerpts"></span></button>
+      <button class="tab" data-tab="trash">Trash <span class="tab-count" id="tcTrash"></span></button>
+      <button class="tab" data-tab="settings">Settings</button>
+    </div>
+
+    <!-- TAB: TESTIMONIALS -->
+    <div class="tab-panel active" id="panel-testimonials">
+      <div class="toolbar">
         <h2>Testimonials</h2>
+        <div class="toolbar-right">
+          <span class="count-label" id="testimonialsCount"></span>
+          <button class="btn btn-accent" onclick="openModal('testimonial')">+ New</button>
+        </div>
       </div>
+      <table><thead><tr>
+        <th>Quote</th><th>Author</th><th>Status</th><th>Created</th><th>Actions</th>
+      </tr></thead><tbody id="tbTestimonials"></tbody></table>
+      <div class="empty-state" id="emptyTestimonials" style="display:none;">No testimonials yet.</div>
+    </div>
 
-      <table id="testimonialTable">
-        <thead>
-          <tr>
-            <th data-sort="quote">Quote</th>
-            <th data-sort="author">Author</th>
-            <th data-sort="status">Status</th>
-            <th data-sort="created">Created</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
+    <!-- TAB: EXCERPTS -->
+    <div class="tab-panel" id="panel-excerpts">
+      <div class="toolbar">
+        <h2>Fax Excerpts</h2>
+        <div class="toolbar-right">
+          <span class="count-label" id="excerptsCount"></span>
+          <button class="btn btn-ghost" onclick="applyDefaultTiming()">Apply Default Timing to All</button>
+          <button class="btn btn-accent" onclick="openModal('excerpt')">+ New Excerpt</button>
+        </div>
+      </div>
+      <table><thead><tr>
+        <th class="td-order">Order</th><th>Excerpt</th><th>Status</th><th>Delay</th><th>Duration</th><th>Actions</th>
+      </tr></thead><tbody id="tbExcerpts"></tbody></table>
+      <div class="empty-state" id="emptyExcerpts" style="display:none;">No excerpts yet.</div>
+    </div>
 
-      <div class="empty-state" id="emptyState" style="display:none;">No testimonials yet. Add your first one.</div>
+    <!-- TAB: TRASH -->
+    <div class="tab-panel" id="panel-trash">
+      <div class="toolbar">
+        <h2>Trash</h2>
+        <div class="toolbar-right">
+          <span class="count-label" id="trashCount"></span>
+          <button class="btn btn-danger" onclick="emptyTrash()">Empty Trash</button>
+        </div>
+      </div>
+      <table><thead><tr>
+        <th>Type</th><th>Content</th><th>Deleted</th><th>Expires</th><th>Actions</th>
+      </tr></thead><tbody id="tbTrash"></tbody></table>
+      <div class="empty-state" id="emptyTrash" style="display:none;">Trash is empty.</div>
+    </div>
+
+    <!-- TAB: SETTINGS -->
+    <div class="tab-panel" id="panel-settings">
+      <div class="toolbar"><h2>Fax Idle Settings</h2></div>
+      <div class="settings-grid">
+        <div class="setting-card">
+          <h4>Default Idle Delay</h4>
+          <p>How long before the fax machine appears when the user stops interacting.</p>
+          <div class="setting-row">
+            <label>Delay</label>
+            <input type="number" id="settingIdleDelay" min="1" max="300" step="1">
+            <span class="unit">seconds</span>
+          </div>
+        </div>
+        <div class="setting-card">
+          <h4>Default Display Duration</h4>
+          <p>How long each excerpt is shown before the paper falls and the next one prints.</p>
+          <div class="setting-row">
+            <label>Duration</label>
+            <input type="number" id="settingDisplayDuration" min="2" max="120" step="1">
+            <span class="unit">seconds</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:1rem;">
+        <button class="btn btn-accent" onclick="saveSettings()">Save Settings</button>
+      </div>
     </div>
   </div>
 
-  <!-- EDIT/ADD MODAL -->
+  <!-- MODAL -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
-      <h3 id="modalTitle">New Testimonial</h3>
-      <div class="field">
-        <label for="editQuote">Quote</label>
-        <textarea id="editQuote" placeholder="Enter the testimonial text..."></textarea>
+      <h3 id="modalTitle">New Item</h3>
+      <!-- Testimonial fields -->
+      <div id="fieldsTestimonial">
+        <div class="field">
+          <label for="mQuote">Quote</label>
+          <textarea id="mQuote" placeholder="Enter the testimonial text..."></textarea>
+        </div>
+        <div class="field">
+          <label for="mAuthor">Author</label>
+          <input type="text" id="mAuthor" placeholder="Name or identifier">
+        </div>
+        <div class="field">
+          <label for="mTStatus">Status</label>
+          <select id="mTStatus"><option value="draft">Draft</option><option value="published">Published</option></select>
+        </div>
       </div>
-      <div class="field">
-        <label for="editAuthor">Author</label>
-        <input type="text" id="editAuthor" placeholder="Name or identifier">
-      </div>
-      <div class="field">
-        <label for="editStatus">Status</label>
-        <select id="editStatus">
-          <option value="draft">Draft</option>
-          <option value="published">Published</option>
-        </select>
+      <!-- Excerpt fields -->
+      <div id="fieldsExcerpt" style="display:none;">
+        <div class="field">
+          <label for="mExcerpt">Excerpt Text</label>
+          <textarea id="mExcerpt" placeholder="Enter the fax excerpt..."></textarea>
+        </div>
+        <div class="field">
+          <label for="mEStatus">Status</label>
+          <select id="mEStatus"><option value="draft">Draft</option><option value="published">Published</option></select>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="mDelay">Idle Delay Override</label>
+            <input type="number" id="mDelay" placeholder="Default" min="1" max="300" step="1">
+            <div class="field-hint">Seconds. Leave blank to use default.</div>
+          </div>
+          <div class="field">
+            <label for="mDuration">Display Duration Override</label>
+            <input type="number" id="mDuration" placeholder="Default" min="2" max="120" step="1">
+            <div class="field-hint">Seconds. Leave blank to use default.</div>
+          </div>
+        </div>
       </div>
       <div class="modal-actions">
         <button class="btn btn-ghost" id="modalCancel">Cancel</button>
@@ -481,271 +307,391 @@
     </div>
   </div>
 
-  <!-- CONFIRM DIALOG -->
+  <!-- CONFIRM -->
   <div class="confirm-overlay" id="confirmOverlay">
     <div class="confirm-box">
       <p id="confirmMsg">You have unsaved changes.</p>
-      <div class="confirm-actions">
-        <button class="btn btn-ghost" id="confirmDiscard">Discard Changes</button>
-        <button class="btn btn-accent" id="confirmSave">Save & Close</button>
-      </div>
+      <div class="confirm-actions" id="confirmActions"></div>
     </div>
   </div>
 
-  <script>
-    // ==================== DATA LAYER ====================
-    const STORAGE_KEY = 'faxclub-testimonials';
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
 
-    // Default testimonials (seed data matching homepage)
-    const DEFAULTS = [
-      { id: '1', quote: 'Thought-provoking, challenges your values, difficult to put down. This isn\'t just a book \u2014 it\'s a mirror.', author: 'Kindle Customer', status: 'published', created: '2025-12-01T10:00:00Z', updated: '2025-12-01T10:00:00Z' },
-      { id: '2', quote: 'Outstanding idea. Brilliant thought provoking read. The kind of thing the world needs more of right now.', author: 'Rob Robson', status: 'published', created: '2025-12-05T14:30:00Z', updated: '2025-12-05T14:30:00Z' },
-      { id: '3', quote: 'Fun and inspiring. Easy to pick up. Easy to love. Hard to forget.', author: 'Girl with a Book', status: 'published', created: '2025-12-10T09:15:00Z', updated: '2025-12-10T09:15:00Z' },
-      { id: '4', quote: 'Essential reading for anyone in a position of influence. If you lead people, read this.', author: 'Tom Kingsley', status: 'published', created: '2025-12-18T16:00:00Z', updated: '2025-12-18T16:00:00Z' },
-      { id: '5', quote: '32 voices thinking aloud \u2014 non-polished, non-filtered. Refreshingly real in a world of hot takes.', author: 'Amazon Customer', status: 'published', created: '2026-01-03T11:45:00Z', updated: '2026-01-03T11:45:00Z' },
+  <script>
+    // ==================== STORAGE ====================
+    const KEYS = {
+      testimonials: 'faxclub-testimonials',
+      excerpts: 'faxclub-excerpts',
+      trash: 'faxclub-trash',
+      settings: 'faxclub-settings',
+    };
+
+    const DEFAULT_TESTIMONIALS = [
+      { id: 't1', quote: "Thought-provoking, challenges your values, difficult to put down. This isn't just a book \u2014 it's a mirror.", author: 'Kindle Customer', status: 'published', created: '2025-12-01T10:00:00Z', updated: '2025-12-01T10:00:00Z' },
+      { id: 't2', quote: 'Outstanding idea. Brilliant thought provoking read. The kind of thing the world needs more of right now.', author: 'Rob Robson', status: 'published', created: '2025-12-05T14:30:00Z', updated: '2025-12-05T14:30:00Z' },
+      { id: 't3', quote: 'Fun and inspiring. Easy to pick up. Easy to love. Hard to forget.', author: 'Girl with a Book', status: 'published', created: '2025-12-10T09:15:00Z', updated: '2025-12-10T09:15:00Z' },
+      { id: 't4', quote: 'Essential reading for anyone in a position of influence. If you lead people, read this.', author: 'Tom Kingsley', status: 'published', created: '2025-12-18T16:00:00Z', updated: '2025-12-18T16:00:00Z' },
+      { id: 't5', quote: "32 voices thinking aloud \u2014 non-polished, non-filtered. Refreshingly real in a world of hot takes.", author: 'Amazon Customer', status: 'published', created: '2026-01-03T11:45:00Z', updated: '2026-01-03T11:45:00Z' },
     ];
 
-    function loadTestimonials() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULTS));
-        return [...DEFAULTS];
-      }
+    const DEFAULT_EXCERPTS = [
+      { id: 'e1', text: "We spend our lives being watched, measured, optimised. What happens when you strip all that away and just\u2026 think? Something strange. Something honest. Something the algorithm can\u2019t predict.", status: 'published', order: 0, delay: null, duration: null, created: '2026-01-01T00:00:00Z', updated: '2026-01-01T00:00:00Z' },
+      { id: 'e2', text: "The fax machine doesn\u2019t care who you are. It doesn\u2019t know your follower count. It just receives the signal and prints the truth, one page at a time.", status: 'published', order: 1, delay: null, duration: null, created: '2026-01-01T00:01:00Z', updated: '2026-01-01T00:01:00Z' },
+      { id: 'e3', text: "Week 17. The question was simple: \u2018What are you afraid to say out loud?\u2019 Nobody held back. When you\u2019re anonymous, courage comes easier.", status: 'published', order: 2, delay: null, duration: null, created: '2026-01-01T00:02:00Z', updated: '2026-01-01T00:02:00Z' },
+      { id: 'e4', text: "One hundred strangers agreed to think deeply for a year. No names. No faces. No likes. Just questions, answers, and the space between them.", status: 'published', order: 3, delay: null, duration: null, created: '2026-01-01T00:03:00Z', updated: '2026-01-01T00:03:00Z' },
+      { id: 'e5', text: "The best ideas don\u2019t arrive on screens. They arrive on paper, in silence, when nobody\u2019s performing for an audience that doesn\u2019t exist.", status: 'published', order: 4, delay: null, duration: null, created: '2026-01-01T00:04:00Z', updated: '2026-01-01T00:04:00Z' },
+      { id: 'e6', text: "Week 34. Someone wrote: \u2018I\u2019ve spent my whole career building things that make people scroll faster. This is the first thing that made me stop.\u2019", status: 'published', order: 5, delay: null, duration: null, created: '2026-01-01T00:05:00Z', updated: '2026-01-01T00:05:00Z' },
+      { id: 'e7', text: "Somewhere between the dial tone and the printout, something human survived. This book is the proof.", status: 'published', order: 6, delay: null, duration: null, created: '2026-01-01T00:06:00Z', updated: '2026-01-01T00:06:00Z' },
+    ];
+
+    const DEFAULT_SETTINGS = { idleDelay: 5, displayDuration: 7 };
+
+    function load(key, defaults) {
+      const raw = localStorage.getItem(key);
+      if (!raw) { save(key, defaults); return JSON.parse(JSON.stringify(defaults)); }
       return JSON.parse(raw);
     }
-
-    function saveTestimonials(data) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
-
-    function genId() {
-      return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    }
+    function save(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+    function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+    function now() { return new Date().toISOString(); }
+    function fmtDate(d) { return new Date(d).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }); }
+    function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
     // ==================== AUTH ====================
-    const PASSWORD = 'the32!';
-    const loginScreen = document.getElementById('loginScreen');
-    const adminPanel = document.getElementById('adminPanel');
-    const loginError = document.getElementById('loginError');
-    const pwInput = document.getElementById('pw');
-
+    const PW = 'the32!';
     function tryLogin() {
-      if (pwInput.value === PASSWORD) {
-        loginScreen.style.display = 'none';
-        adminPanel.classList.add('active');
-        sessionStorage.setItem('faxclub-auth', '1');
-        renderTable();
+      if (document.getElementById('pw').value === PW) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').classList.add('active');
+        sessionStorage.setItem('faxclub-auth','1');
+        renderAll();
       } else {
-        loginError.classList.add('show');
-        pwInput.value = '';
-        pwInput.focus();
-        setTimeout(() => loginError.classList.remove('show'), 2000);
+        const err = document.getElementById('loginError');
+        err.classList.add('show');
+        document.getElementById('pw').value = '';
+        setTimeout(() => err.classList.remove('show'), 2000);
       }
     }
-
     document.getElementById('loginBtn').addEventListener('click', tryLogin);
-    pwInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+    document.getElementById('pw').addEventListener('keydown', e => { if (e.key==='Enter') tryLogin(); });
+    document.getElementById('logoutBtn').addEventListener('click', () => { sessionStorage.removeItem('faxclub-auth'); location.reload(); });
+    if (sessionStorage.getItem('faxclub-auth')) { document.getElementById('loginScreen').style.display='none'; document.getElementById('adminPanel').classList.add('active'); renderAll(); }
 
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      sessionStorage.removeItem('faxclub-auth');
-      location.reload();
+    // ==================== TABS ====================
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+      });
     });
 
-    // Auto-login if session active
-    if (sessionStorage.getItem('faxclub-auth')) {
-      loginScreen.style.display = 'none';
-      adminPanel.classList.add('active');
-      renderTable();
+    // ==================== TOAST ====================
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
     }
 
-    // ==================== TABLE RENDERING ====================
-    const tableBody = document.getElementById('tableBody');
-    const emptyState = document.getElementById('emptyState');
-    const countLabel = document.getElementById('countLabel');
-    let sortField = 'created';
-    let sortDir = -1; // -1 = newest first
+    // ==================== RENDER ====================
+    function renderAll() { renderTestimonials(); renderExcerpts(); renderTrash(); renderSettings(); cleanExpiredTrash(); }
 
-    function renderTable() {
-      const data = loadTestimonials();
-      const sorted = [...data].sort((a, b) => {
-        let va = a[sortField] || '';
-        let vb = b[sortField] || '';
-        if (sortField === 'created' || sortField === 'updated') {
-          va = new Date(va).getTime();
-          vb = new Date(vb).getTime();
-        }
-        if (va < vb) return -1 * sortDir;
-        if (va > vb) return 1 * sortDir;
-        return 0;
-      });
+    function renderTestimonials() {
+      const data = load(KEYS.testimonials, DEFAULT_TESTIMONIALS);
+      const pub = data.filter(t=>t.status==='published').length;
+      document.getElementById('testimonialsCount').textContent = `${pub} published / ${data.length - pub} drafts`;
+      document.getElementById('tcTestimonials').textContent = `(${data.length})`;
+      const tbody = document.getElementById('tbTestimonials');
+      const empty = document.getElementById('emptyTestimonials');
+      if (!data.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+      empty.style.display='none';
+      data.sort((a,b) => new Date(b.created) - new Date(a.created));
+      tbody.innerHTML = data.map(t => `<tr class="${t.status==='draft'?'is-draft':''}">
+        <td class="td-text" title="${esc(t.quote)}">"${esc(t.quote)}"</td>
+        <td>${esc(t.author)}</td>
+        <td><span class="status-badge status-${t.status}">${t.status}</span></td>
+        <td>${fmtDate(t.created)}</td>
+        <td class="td-actions">
+          <button class="btn btn-sm btn-ghost" onclick="editItem('testimonial','${t.id}')">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="trashItem('testimonial','${t.id}')">Trash</button>
+        </td>
+      </tr>`).join('');
+    }
 
-      const published = data.filter(t => t.status === 'published').length;
-      const drafts = data.filter(t => t.status === 'draft').length;
-      countLabel.textContent = `${published} published / ${drafts} drafts`;
+    function renderExcerpts() {
+      const data = load(KEYS.excerpts, DEFAULT_EXCERPTS);
+      const settings = load(KEYS.settings, DEFAULT_SETTINGS);
+      const pub = data.filter(e=>e.status==='published').length;
+      document.getElementById('excerptsCount').textContent = `${pub} published / ${data.length - pub} drafts`;
+      document.getElementById('tcExcerpts').textContent = `(${data.length})`;
+      const tbody = document.getElementById('tbExcerpts');
+      const empty = document.getElementById('emptyExcerpts');
+      if (!data.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+      empty.style.display='none';
+      data.sort((a,b) => (a.order??999) - (b.order??999));
+      tbody.innerHTML = data.map((e, i) => `<tr class="${e.status==='draft'?'is-draft':''}">
+        <td class="td-order">
+          <div class="order-btns">
+            <button class="order-btn" onclick="moveExcerpt('${e.id}',-1)" ${i===0?'disabled':''}>&#9650;</button>
+            <button class="order-btn" onclick="moveExcerpt('${e.id}',1)" ${i===data.length-1?'disabled':''}>&#9660;</button>
+          </div>
+        </td>
+        <td class="td-text" title="${esc(e.text)}">"${esc(e.text)}"</td>
+        <td><span class="status-badge status-${e.status}">${e.status}</span></td>
+        <td class="td-timing">${e.delay ? e.delay+'s' : settings.idleDelay+'s <span style="opacity:0.4">(def)</span>'}</td>
+        <td class="td-timing">${e.duration ? e.duration+'s' : settings.displayDuration+'s <span style="opacity:0.4">(def)</span>'}</td>
+        <td class="td-actions">
+          <button class="btn btn-sm btn-ghost" onclick="editItem('excerpt','${e.id}')">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="trashItem('excerpt','${e.id}')">Trash</button>
+        </td>
+      </tr>`).join('');
+    }
 
-      if (sorted.length === 0) {
-        tableBody.innerHTML = '';
-        emptyState.style.display = 'block';
-        return;
-      }
-
-      emptyState.style.display = 'none';
-      tableBody.innerHTML = sorted.map(t => `
-        <tr class="${t.status === 'draft' ? 'draft' : ''}">
-          <td class="td-quote" title="${t.quote.replace(/"/g, '&quot;')}">"${t.quote}"</td>
-          <td>${t.author}</td>
-          <td><span class="status-badge status-${t.status}">${t.status}</span></td>
-          <td>${new Date(t.created).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+    function renderTrash() {
+      const trash = load(KEYS.trash, []);
+      document.getElementById('tcTrash').textContent = trash.length ? `(${trash.length})` : '';
+      document.getElementById('trashCount').textContent = `${trash.length} items — auto-deleted after 30 days`;
+      const tbody = document.getElementById('tbTrash');
+      const empty = document.getElementById('emptyTrash');
+      if (!trash.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+      empty.style.display='none';
+      trash.sort((a,b) => new Date(b.deletedAt) - new Date(a.deletedAt));
+      tbody.innerHTML = trash.map(t => {
+        const expires = new Date(new Date(t.deletedAt).getTime() + 30*24*60*60*1000);
+        const daysLeft = Math.max(0, Math.ceil((expires - Date.now()) / (24*60*60*1000)));
+        const preview = t.type === 'testimonial' ? t.data.quote : t.data.text;
+        return `<tr>
+          <td><span class="status-badge status-trashed">${t.type}</span></td>
+          <td class="td-text" title="${esc(preview)}">"${esc(preview)}"</td>
+          <td>${fmtDate(t.deletedAt)}</td>
+          <td class="td-timing">${daysLeft} days</td>
           <td class="td-actions">
-            <button onclick="editTestimonial('${t.id}')">Edit</button>
-            <button class="del" onclick="deleteTestimonial('${t.id}')">Del</button>
+            <button class="btn btn-sm btn-success" onclick="restoreItem('${t.id}')">Restore</button>
+            <button class="btn btn-sm btn-danger" onclick="permanentDelete('${t.id}')">Delete</button>
           </td>
-        </tr>
-      `).join('');
+        </tr>`;
+      }).join('');
     }
 
-    // Sorting
-    document.querySelectorAll('th[data-sort]').forEach(th => {
-      th.addEventListener('click', () => {
-        const field = th.dataset.sort;
-        if (sortField === field) { sortDir *= -1; }
-        else { sortField = field; sortDir = field === 'created' ? -1 : 1; }
-        renderTable();
-      });
-    });
+    function renderSettings() {
+      const s = load(KEYS.settings, DEFAULT_SETTINGS);
+      document.getElementById('settingIdleDelay').value = s.idleDelay;
+      document.getElementById('settingDisplayDuration').value = s.displayDuration;
+    }
+
+    function cleanExpiredTrash() {
+      let trash = load(KEYS.trash, []);
+      const cutoff = Date.now() - 30*24*60*60*1000;
+      const filtered = trash.filter(t => new Date(t.deletedAt).getTime() > cutoff);
+      if (filtered.length !== trash.length) { save(KEYS.trash, filtered); renderTrash(); }
+    }
 
     // ==================== MODAL ====================
-    const modalOverlay = document.getElementById('modalOverlay');
-    const modalTitle = document.getElementById('modalTitle');
-    const editQuote = document.getElementById('editQuote');
-    const editAuthor = document.getElementById('editAuthor');
-    const editStatus = document.getElementById('editStatus');
+    let modalType = null;
     let editingId = null;
     let originalValues = {};
+    const modalOverlay = document.getElementById('modalOverlay');
 
-    function openModal(testimonial) {
-      if (testimonial) {
-        editingId = testimonial.id;
-        modalTitle.textContent = 'Edit Testimonial';
-        editQuote.value = testimonial.quote;
-        editAuthor.value = testimonial.author;
-        editStatus.value = testimonial.status;
+    function openModal(type, item) {
+      modalType = type;
+      editingId = item ? item.id : null;
+      document.getElementById('modalTitle').textContent = (editingId ? 'Edit' : 'New') + ' ' + (type === 'testimonial' ? 'Testimonial' : 'Fax Excerpt');
+      document.getElementById('fieldsTestimonial').style.display = type === 'testimonial' ? 'block' : 'none';
+      document.getElementById('fieldsExcerpt').style.display = type === 'excerpt' ? 'block' : 'none';
+
+      if (type === 'testimonial') {
+        document.getElementById('mQuote').value = item ? item.quote : '';
+        document.getElementById('mAuthor').value = item ? item.author : '';
+        document.getElementById('mTStatus').value = item ? item.status : 'draft';
       } else {
-        editingId = null;
-        modalTitle.textContent = 'New Testimonial';
-        editQuote.value = '';
-        editAuthor.value = '';
-        editStatus.value = 'draft';
+        document.getElementById('mExcerpt').value = item ? item.text : '';
+        document.getElementById('mEStatus').value = item ? item.status : 'draft';
+        document.getElementById('mDelay').value = item && item.delay ? item.delay : '';
+        document.getElementById('mDuration').value = item && item.duration ? item.duration : '';
       }
-      originalValues = { quote: editQuote.value, author: editAuthor.value, status: editStatus.value };
+
+      captureOriginal();
       modalOverlay.classList.add('open');
-      editQuote.focus();
+      (type === 'testimonial' ? document.getElementById('mQuote') : document.getElementById('mExcerpt')).focus();
+    }
+
+    function captureOriginal() {
+      if (modalType === 'testimonial') {
+        originalValues = { q: document.getElementById('mQuote').value, a: document.getElementById('mAuthor').value, s: document.getElementById('mTStatus').value };
+      } else {
+        originalValues = { t: document.getElementById('mExcerpt').value, s: document.getElementById('mEStatus').value, d: document.getElementById('mDelay').value, du: document.getElementById('mDuration').value };
+      }
     }
 
     function hasChanges() {
-      return editQuote.value !== originalValues.quote ||
-             editAuthor.value !== originalValues.author ||
-             editStatus.value !== originalValues.status;
+      if (modalType === 'testimonial') {
+        return document.getElementById('mQuote').value !== originalValues.q || document.getElementById('mAuthor').value !== originalValues.a || document.getElementById('mTStatus').value !== originalValues.s;
+      }
+      return document.getElementById('mExcerpt').value !== originalValues.t || document.getElementById('mEStatus').value !== originalValues.s || document.getElementById('mDelay').value !== originalValues.d || document.getElementById('mDuration').value !== originalValues.du;
     }
 
-    function closeModal() {
-      modalOverlay.classList.remove('open');
-      editingId = null;
-    }
+    function closeModal() { modalOverlay.classList.remove('open'); editingId = null; modalType = null; }
 
     function saveModal() {
-      const quote = editQuote.value.trim();
-      const author = editAuthor.value.trim();
-      if (!quote || !author) return;
-
-      const data = loadTestimonials();
-      const now = new Date().toISOString();
-
-      if (editingId) {
-        const idx = data.findIndex(t => t.id === editingId);
-        if (idx !== -1) {
-          data[idx].quote = quote;
-          data[idx].author = author;
-          data[idx].status = editStatus.value;
-          data[idx].updated = now;
+      const n = now();
+      if (modalType === 'testimonial') {
+        const quote = document.getElementById('mQuote').value.trim();
+        const author = document.getElementById('mAuthor').value.trim();
+        if (!quote || !author) return;
+        const data = load(KEYS.testimonials, DEFAULT_TESTIMONIALS);
+        if (editingId) {
+          const item = data.find(t => t.id === editingId);
+          if (item) { item.quote = quote; item.author = author; item.status = document.getElementById('mTStatus').value; item.updated = n; }
+        } else {
+          data.push({ id: uid(), quote, author, status: document.getElementById('mTStatus').value, created: n, updated: n });
         }
+        save(KEYS.testimonials, data);
       } else {
-        data.push({
-          id: genId(),
-          quote,
-          author,
-          status: editStatus.value,
-          created: now,
-          updated: now,
-        });
+        const text = document.getElementById('mExcerpt').value.trim();
+        if (!text) return;
+        const data = load(KEYS.excerpts, DEFAULT_EXCERPTS);
+        const delay = document.getElementById('mDelay').value ? parseInt(document.getElementById('mDelay').value) : null;
+        const duration = document.getElementById('mDuration').value ? parseInt(document.getElementById('mDuration').value) : null;
+        if (editingId) {
+          const item = data.find(e => e.id === editingId);
+          if (item) { item.text = text; item.status = document.getElementById('mEStatus').value; item.delay = delay; item.duration = duration; item.updated = n; }
+        } else {
+          const maxOrder = data.reduce((m, e) => Math.max(m, e.order ?? 0), -1);
+          data.push({ id: uid(), text, status: document.getElementById('mEStatus').value, order: maxOrder + 1, delay, duration, created: n, updated: n });
+        }
+        save(KEYS.excerpts, data);
       }
-
-      saveTestimonials(data);
       closeModal();
-      renderTable();
+      renderAll();
+      showToast('Saved successfully');
     }
 
-    document.getElementById('addBtn').addEventListener('click', () => openModal(null));
     document.getElementById('modalSave').addEventListener('click', saveModal);
-
-    // Cancel with unsaved changes warning
     document.getElementById('modalCancel').addEventListener('click', () => {
-      if (hasChanges()) {
-        showConfirm();
-      } else {
-        closeModal();
-      }
+      if (hasChanges()) showConfirm('unsaved');
+      else closeModal();
     });
+    modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) { if (hasChanges()) showConfirm('unsaved'); else closeModal(); } });
 
-    // Close on overlay click
-    modalOverlay.addEventListener('click', e => {
-      if (e.target === modalOverlay) {
-        if (hasChanges()) showConfirm();
-        else closeModal();
-      }
-    });
-
-    // Escape key
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        if (confirmOverlay.classList.contains('open')) {
-          confirmOverlay.classList.remove('open');
-        } else if (modalOverlay.classList.contains('open')) {
-          if (hasChanges()) showConfirm();
-          else closeModal();
-        }
-      }
-    });
-
-    // ==================== CONFIRM DIALOG ====================
+    // ==================== CONFIRM ====================
     const confirmOverlay = document.getElementById('confirmOverlay');
-
-    function showConfirm() {
+    function showConfirm(type, extra) {
+      const msg = document.getElementById('confirmMsg');
+      const actions = document.getElementById('confirmActions');
+      if (type === 'unsaved') {
+        msg.textContent = 'You have unsaved changes.';
+        actions.innerHTML = `<button class="btn btn-ghost" onclick="confirmOverlay.classList.remove('open');closeModal();">Discard</button><button class="btn btn-accent" onclick="confirmOverlay.classList.remove('open');saveModal();">Save & Close</button>`;
+      } else if (type === 'permDelete') {
+        msg.textContent = 'Permanently delete this item? This cannot be undone.';
+        actions.innerHTML = `<button class="btn btn-ghost" onclick="confirmOverlay.classList.remove('open');">Cancel</button><button class="btn btn-danger" onclick="confirmOverlay.classList.remove('open');doPermanentDelete('${extra}');">Delete Forever</button>`;
+      } else if (type === 'emptyTrash') {
+        msg.textContent = 'Permanently delete all items in trash?';
+        actions.innerHTML = `<button class="btn btn-ghost" onclick="confirmOverlay.classList.remove('open');">Cancel</button><button class="btn btn-danger" onclick="confirmOverlay.classList.remove('open');doEmptyTrash();">Empty Trash</button>`;
+      }
       confirmOverlay.classList.add('open');
     }
 
-    document.getElementById('confirmDiscard').addEventListener('click', () => {
-      confirmOverlay.classList.remove('open');
-      closeModal();
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        if (confirmOverlay.classList.contains('open')) confirmOverlay.classList.remove('open');
+        else if (modalOverlay.classList.contains('open')) { if (hasChanges()) showConfirm('unsaved'); else closeModal(); }
+      }
     });
 
-    document.getElementById('confirmSave').addEventListener('click', () => {
-      confirmOverlay.classList.remove('open');
-      saveModal();
-    });
-
-    // ==================== EDIT / DELETE ====================
-    window.editTestimonial = function(id) {
-      const data = loadTestimonials();
-      const t = data.find(x => x.id === id);
-      if (t) openModal(t);
+    // ==================== ACTIONS ====================
+    window.editItem = function(type, id) {
+      if (type === 'testimonial') {
+        const data = load(KEYS.testimonials, DEFAULT_TESTIMONIALS);
+        const item = data.find(t => t.id === id);
+        if (item) openModal('testimonial', item);
+      } else {
+        const data = load(KEYS.excerpts, DEFAULT_EXCERPTS);
+        const item = data.find(e => e.id === id);
+        if (item) openModal('excerpt', item);
+      }
     };
 
-    window.deleteTestimonial = function(id) {
-      if (!confirm('Delete this testimonial?')) return;
-      const data = loadTestimonials().filter(t => t.id !== id);
-      saveTestimonials(data);
-      renderTable();
+    window.trashItem = function(type, id) {
+      const key = type === 'testimonial' ? KEYS.testimonials : KEYS.excerpts;
+      const defaults = type === 'testimonial' ? DEFAULT_TESTIMONIALS : DEFAULT_EXCERPTS;
+      const data = load(key, defaults);
+      const idx = data.findIndex(i => i.id === id);
+      if (idx === -1) return;
+      const item = data.splice(idx, 1)[0];
+      save(key, data);
+      const trash = load(KEYS.trash, []);
+      trash.push({ id: uid(), type, data: item, deletedAt: now() });
+      save(KEYS.trash, trash);
+      renderAll();
+      showToast('Moved to trash');
+    };
+
+    window.restoreItem = function(trashId) {
+      const trash = load(KEYS.trash, []);
+      const idx = trash.findIndex(t => t.id === trashId);
+      if (idx === -1) return;
+      const entry = trash.splice(idx, 1)[0];
+      save(KEYS.trash, trash);
+      const key = entry.type === 'testimonial' ? KEYS.testimonials : KEYS.excerpts;
+      const defaults = entry.type === 'testimonial' ? DEFAULT_TESTIMONIALS : DEFAULT_EXCERPTS;
+      const data = load(key, defaults);
+      entry.data.status = 'draft'; // Restore as draft
+      data.push(entry.data);
+      save(key, data);
+      renderAll();
+      showToast('Restored as draft');
+    };
+
+    window.permanentDelete = function(trashId) { showConfirm('permDelete', trashId); };
+    window.doPermanentDelete = function(trashId) {
+      const trash = load(KEYS.trash, []).filter(t => t.id !== trashId);
+      save(KEYS.trash, trash);
+      renderAll();
+      showToast('Permanently deleted');
+    };
+
+    window.emptyTrash = function() { showConfirm('emptyTrash'); };
+    window.doEmptyTrash = function() {
+      save(KEYS.trash, []);
+      renderAll();
+      showToast('Trash emptied');
+    };
+
+    // ==================== EXCERPT ORDERING ====================
+    window.moveExcerpt = function(id, dir) {
+      const data = load(KEYS.excerpts, DEFAULT_EXCERPTS);
+      data.sort((a,b) => (a.order??999) - (b.order??999));
+      const idx = data.findIndex(e => e.id === id);
+      if (idx === -1) return;
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= data.length) return;
+      [data[idx], data[newIdx]] = [data[newIdx], data[idx]];
+      data.forEach((e, i) => e.order = i);
+      save(KEYS.excerpts, data);
+      renderExcerpts();
+    };
+
+    // ==================== APPLY DEFAULT TIMING ====================
+    window.applyDefaultTiming = function() {
+      const data = load(KEYS.excerpts, DEFAULT_EXCERPTS);
+      data.forEach(e => { e.delay = null; e.duration = null; });
+      save(KEYS.excerpts, data);
+      renderExcerpts();
+      showToast('Default timing applied to all excerpts');
+    };
+
+    // ==================== SETTINGS ====================
+    window.saveSettings = function() {
+      const s = {
+        idleDelay: Math.max(1, parseInt(document.getElementById('settingIdleDelay').value) || 5),
+        displayDuration: Math.max(2, parseInt(document.getElementById('settingDisplayDuration').value) || 7),
+      };
+      save(KEYS.settings, s);
+      renderExcerpts();
+      showToast('Settings saved');
     };
   </script>
 </body>
