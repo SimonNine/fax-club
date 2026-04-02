@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Fax Club Experiment</title>
+  <meta name="description" content="An anonymous experiment in slow thinking, deep questions, and human connection. 100 strangers. 52 weeks. 1 question at a time.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ==================== RESET & BASE ==================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream: #FAF6EE;
+      --warm-white: #F5F0E6;
+      --ink: #1A1A18;
+      --fax-gray: #2C2C2A;
+      --amber: #C4913B;
+      --amber-light: #E8C97A;
+      --olive: #4A5A3C;
+      --paper: #EDE8DA;
+      --red-accent: #B8413C;
+      --mono: 'Space Mono', monospace;
+      --serif: 'Instrument Serif', Georgia, serif;
+      --sans: 'Inter', -apple-system, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Scanline overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.015) 2px,
+        rgba(0,0,0,0.015) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ==================== GRAIN TEXTURE ==================== */
+    .grain {
+      position: fixed;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9998;
+      animation: grain 8s steps(10) infinite;
+    }
+
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-5%, -10%); }
+      20% { transform: translate(-15%, 5%); }
+      30% { transform: translate(7%, -25%); }
+      40% { transform: translate(-5%, 25%); }
+      50% { transform: translate(-15%, 10%); }
+      60% { transform: translate(15%, 0%); }
+      70% { transform: translate(0%, 15%); }
+      80% { transform: translate(3%, 35%); }
+      90% { transform: translate(-10%, 10%); }
+    }
+
+    /* ==================== NAVIGATION ==================== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(12px);
+      background: rgba(250, 246, 238, 0.85);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      transition: transform 0.3s ease;
+    }
+
+    nav.hidden { transform: translateY(-100%); }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--fax-gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--amber); }
+
+    .nav-cta {
+      background: var(--ink) !important;
+      color: var(--cream) !important;
+      padding: 0.6rem 1.4rem !important;
+      border-radius: 0 !important;
+      transition: background 0.2s !important;
+    }
+
+    .nav-cta:hover { background: var(--amber) !important; }
+
+    /* ==================== HERO ==================== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+    }
+
+    .hero-badge {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.3s;
+    }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: 1.05;
+      font-weight: 400;
+      max-width: 900px;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.5s;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--amber);
+    }
+
+    .hero-sub {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      line-height: 1.8;
+      max-width: 500px;
+      color: var(--fax-gray);
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.7s;
+    }
+
+    .hero-cta-group {
+      margin-top: 3rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.9s;
+    }
+
+    .btn-primary {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 1rem 2.5rem;
+      background: var(--ink);
+      color: var(--cream);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: var(--amber);
+      transition: left 0.3s ease;
+      z-index: 0;
+    }
+
+    .btn-primary:hover::before { left: 0; }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    .btn-secondary {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 1rem 2.5rem;
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--ink);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--ink);
+      color: var(--cream);
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1.2s;
+    }
+
+    .hero-scroll span {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fax-gray);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: var(--fax-gray);
+      animation: scrollPulse 2s ease infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.5); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ==================== MARQUEE ==================== */
+    .marquee-section {
+      padding: 1.5rem 0;
+      border-top: 1px solid rgba(0,0,0,0.08);
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      overflow: hidden;
+      background: var(--warm-white);
+    }
+
+    .marquee-track {
+      display: flex;
+      animation: marquee 30s linear infinite;
+      width: max-content;
+    }
+
+    .marquee-item {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fax-gray);
+      white-space: nowrap;
+      padding: 0 3rem;
+      opacity: 0.5;
+    }
+
+    .marquee-item .dot {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      background: var(--amber);
+      border-radius: 50%;
+      margin-left: 3rem;
+      vertical-align: middle;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ==================== STATS ==================== */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+      gap: 2rem;
+    }
+
+    .stat {
+      text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .stat.visible {
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    .stat-number {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 6vw, 5rem);
+      color: var(--amber);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fax-gray);
+    }
+
+    /* ==================== THE QUESTION ==================== */
+    .question-section {
+      background: var(--ink);
+      color: var(--cream);
+      padding: 8rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .question-section::before {
+      content: '"';
+      position: absolute;
+      top: -0.5em;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--serif);
+      font-size: 30rem;
+      color: rgba(255,255,255,0.03);
+      pointer-events: none;
+    }
+
+    .question-text {
+      font-family: var(--serif);
+      font-size: clamp(1.5rem, 4vw, 3rem);
+      line-height: 1.4;
+      max-width: 750px;
+      margin: 0 auto;
+      font-style: italic;
+    }
+
+    .typewriter-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1em;
+      background: var(--amber);
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .question-attribution {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-top: 3rem;
+    }
+
+    /* ==================== IMAGE GRID ==================== */
+    .image-grid-section {
+      padding: 6rem 2rem;
+    }
+
+    .image-grid-section .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 400;
+      line-height: 1.2;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: auto;
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .grid-item {
+      position: relative;
+      overflow: hidden;
+      background: var(--paper);
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .grid-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .grid-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: sepia(20%) contrast(1.05) brightness(0.95);
+      transition: all 0.6s ease;
+    }
+
+    .grid-item:hover img {
+      filter: sepia(0%) contrast(1.1) brightness(1);
+      transform: scale(1.05);
+    }
+
+    .grid-item-1 { grid-column: 1 / 7; grid-row: 1; aspect-ratio: 4/3; }
+    .grid-item-2 { grid-column: 7 / 13; grid-row: 1; aspect-ratio: 4/3; }
+    .grid-item-3 { grid-column: 1 / 5; grid-row: 2; aspect-ratio: 3/4; }
+    .grid-item-4 { grid-column: 5 / 9; grid-row: 2; aspect-ratio: 3/4; }
+    .grid-item-5 { grid-column: 9 / 13; grid-row: 2; aspect-ratio: 3/4; }
+
+    .grid-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 2rem 1.5rem 1.5rem;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      color: var(--cream);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transform: translateY(100%);
+      transition: transform 0.4s ease;
+    }
+
+    .grid-item:hover .grid-caption {
+      transform: translateY(0);
+    }
+
+    /* ==================== ABOUT / CONCEPT ==================== */
+    .concept {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 80vh;
+      position: relative;
+    }
+
+    .concept-visual {
+      position: relative;
+      overflow: hidden;
+      background: var(--paper);
+    }
+
+    .concept-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: sepia(15%) contrast(1.05);
+    }
+
+    .concept-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem 5rem;
+      background: var(--warm-white);
+    }
+
+    .concept-content .section-eyebrow { margin-bottom: 1.5rem; }
+
+    .concept-content h2 {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 3vw, 3rem);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 2rem;
+    }
+
+    .concept-content p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--fax-gray);
+      margin-bottom: 1.5rem;
+      max-width: 450px;
+    }
+
+    .concept-content .btn-primary { align-self: flex-start; margin-top: 1rem; }
+
+    /* ==================== FAX FEED / TESTIMONIALS ==================== */
+    .fax-feed {
+      background: var(--ink);
+      color: var(--cream);
+      padding: 8rem 2rem;
+      overflow: hidden;
+    }
+
+    .fax-feed .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .fax-feed .section-eyebrow { color: var(--amber-light); }
+    .fax-feed .section-title { color: var(--cream); }
+
+    .fax-cards {
+      display: flex;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 1rem;
+      scrollbar-width: none;
+    }
+
+    .fax-cards::-webkit-scrollbar { display: none; }
+
+    .fax-card {
+      min-width: 340px;
+      max-width: 380px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 2.5rem;
+      scroll-snap-align: start;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .fax-card:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: var(--amber);
+    }
+
+    .fax-card::before {
+      content: 'FAX';
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--amber);
+      opacity: 0.5;
+    }
+
+    .fax-card-text {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      line-height: 1.6;
+      font-style: italic;
+      margin-bottom: 2rem;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .fax-card-author {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--amber-light);
+    }
+
+    /* ==================== ENDORSEMENTS ==================== */
+    .endorsements {
+      padding: 8rem 2rem;
+      background: var(--warm-white);
+    }
+
+    .endorsements .section-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+
+    .endorsement-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 3rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .endorsement {
+      text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .endorsement.visible {
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    .endorsement-quote {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      line-height: 1.6;
+      font-style: italic;
+      margin-bottom: 1.5rem;
+      color: var(--fax-gray);
+    }
+
+    .endorsement-name {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .endorsement-title {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--amber);
+      margin-top: 0.3rem;
+    }
+
+    /* ==================== CTA / NEWSLETTER ==================== */
+    .cta-section {
+      padding: 8rem 2rem;
+      text-align: center;
+      position: relative;
+      background: var(--cream);
+    }
+
+    .cta-section h2 {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 400;
+      line-height: 1.15;
+      max-width: 700px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .cta-section h2 em {
+      font-style: italic;
+      color: var(--amber);
+    }
+
+    .cta-section p {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.8;
+      color: var(--fax-gray);
+      max-width: 450px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 4rem;
+    }
+
+    .newsletter-form {
+      max-width: 480px;
+      margin: 0 auto;
+      padding-top: 4rem;
+      border-top: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .newsletter-form h3 {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      color: var(--fax-gray);
+    }
+
+    .newsletter-form p {
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 0;
+    }
+
+    .input-group input {
+      flex: 1;
+      padding: 1rem 1.2rem;
+      border: 1px solid rgba(0,0,0,0.15);
+      border-right: none;
+      background: white;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-group input:focus { border-color: var(--amber); }
+
+    .input-group button {
+      padding: 1rem 2rem;
+      background: var(--ink);
+      color: var(--cream);
+      border: 1px solid var(--ink);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .input-group button:hover { background: var(--amber); border-color: var(--amber); }
+
+    /* ==================== PARALLAX STRIP ==================== */
+    .parallax-strip {
+      height: 60vh;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .parallax-strip .bg {
+      position: absolute;
+      inset: -20%;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      filter: sepia(25%) brightness(0.6) contrast(1.1);
+    }
+
+    .parallax-strip .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(26,26,24,0.55);
+    }
+
+    .parallax-strip .content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      color: var(--cream);
+      padding: 2rem;
+    }
+
+    .parallax-strip .content h2 {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 400;
+      line-height: 1.2;
+      max-width: 600px;
+    }
+
+    .parallax-strip .content h2 em {
+      font-style: italic;
+      color: var(--amber-light);
+    }
+
+    /* ==================== HORIZONTAL SCROLL TEXT ==================== */
+    .scroll-text-section {
+      padding: 4rem 0;
+      overflow: hidden;
+      background: var(--cream);
+    }
+
+    .scroll-text {
+      font-family: var(--serif);
+      font-size: clamp(4rem, 10vw, 10rem);
+      font-weight: 400;
+      white-space: nowrap;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(26,26,24,0.15);
+      animation: scrollText 20s linear infinite;
+    }
+
+    @keyframes scrollText {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ==================== FOOTER ==================== */
+    footer {
+      background: var(--ink);
+      color: var(--cream);
+      padding: 4rem 2rem 2rem;
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    .footer-logo {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--amber-light); }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-bottom span {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .social-links a {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .social-links a:hover { color: var(--amber-light); }
+
+    /* ==================== ANIMATIONS ==================== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+      .concept { grid-template-columns: 1fr; }
+      .concept-content { padding: 4rem 2rem; }
+      .stats { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+      .image-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+      }
+      .grid-item-1 { grid-column: 1 / -1; }
+      .grid-item-2 { grid-column: 1 / -1; }
+      .grid-item-3 { grid-column: 1 / 2; }
+      .grid-item-4 { grid-column: 2 / 3; }
+      .grid-item-5 { grid-column: 1 / -1; }
+      .nav-links { display: none; }
+      .fax-card { min-width: 280px; }
+      .endorsement-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ==================== CUSTOM CURSOR ==================== */
+    @media (pointer: fine) {
+      .cursor-dot {
+        width: 8px; height: 8px;
+        background: var(--amber);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 10000;
+        transition: transform 0.1s ease;
+        mix-blend-mode: difference;
+      }
+
+      .cursor-ring {
+        width: 35px; height: 35px;
+        border: 1px solid var(--amber);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 10000;
+        transition: all 0.15s ease;
+        mix-blend-mode: difference;
+      }
+
+      .cursor-ring.hover {
+        width: 55px; height: 55px;
+        border-color: var(--cream);
+        background: rgba(196, 145, 59, 0.1);
+      }
+    }
+
+    /* ==================== PAGE TRANSITION ==================== */
+    .page-loader {
+      position: fixed;
+      inset: 0;
+      background: var(--ink);
+      z-index: 10001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .page-loader.loaded {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader-text {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .loader-text span {
+      display: inline-block;
+      animation: loaderPulse 1.5s ease infinite;
+    }
+
+    .loader-text span:nth-child(2) { animation-delay: 0.1s; }
+    .loader-text span:nth-child(3) { animation-delay: 0.2s; }
+    .loader-text span:nth-child(4) { animation-delay: 0.3s; }
+    .loader-text span:nth-child(5) { animation-delay: 0.4s; }
+    .loader-text span:nth-child(6) { animation-delay: 0.5s; }
+    .loader-text span:nth-child(7) { animation-delay: 0.6s; }
+    .loader-text span:nth-child(8) { animation-delay: 0.7s; }
+    .loader-text span:nth-child(9) { animation-delay: 0.8s; }
+    .loader-text span:nth-child(10) { animation-delay: 0.9s; }
+    .loader-text span:nth-child(11) { animation-delay: 1.0s; }
+    .loader-text span:nth-child(12) { animation-delay: 1.1s; }
+
+    @keyframes loaderPulse {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    /* ==================== REVEAL ANIMATIONS ==================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ==================== GLITCH TEXT ==================== */
+    .glitch {
+      position: relative;
+    }
+
+    .glitch:hover {
+      animation: glitch 0.3s ease;
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    /* ==================== COUNTER ANIMATION ==================== */
+    .counter { display: inline-block; }
+  </style>
+</head>
+<body>
+
+  <!-- Page Loader -->
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-text">
+      <span>T</span><span>R</span><span>A</span><span>N</span><span>S</span><span>M</span><span>I</span><span>T</span><span>T</span><span>I</span><span>N</span><span>G</span>
+    </div>
+  </div>
+
+  <!-- Grain Overlay -->
+  <div class="grain"></div>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo glitch">Fax Club</a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#voices">Voices</a>
+      <a href="#press">Press</a>
+      <a href="https://www.amazon.co.uk/dp/B0F1YFP3QR" target="_blank" class="nav-cta">Get the Book</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">An Anonymous Experiment in Slow Thinking</div>
+    <h1>100 strangers.<br>52 weeks.<br>One <em>question</em><br>at a time.</h1>
+    <p class="hero-sub">Not a memoir. Not a manifesto.<br>Something else. Something real.<br>Something made slowly, on purpose.</p>
+    <div class="hero-cta-group">
+      <a href="https://www.amazon.co.uk/dp/B0F1YFP3QR" target="_blank" class="btn-primary"><span>Get Your Copy</span></a>
+      <a href="#about" class="btn-secondary">Learn More</a>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <span class="marquee-item">52 Weeks <span class="dot"></span></span>
+      <span class="marquee-item">100 Anonymous Thinkers <span class="dot"></span></span>
+      <span class="marquee-item">32 Voices Selected <span class="dot"></span></span>
+      <span class="marquee-item">1 Question Per Week <span class="dot"></span></span>
+      <span class="marquee-item">0 Algorithms <span class="dot"></span></span>
+      <span class="marquee-item">100% Human <span class="dot"></span></span>
+      <span class="marquee-item">Radically Honest <span class="dot"></span></span>
+      <span class="marquee-item">Deeply Anonymous <span class="dot"></span></span>
+      <!-- Duplicate for seamless loop -->
+      <span class="marquee-item">52 Weeks <span class="dot"></span></span>
+      <span class="marquee-item">100 Anonymous Thinkers <span class="dot"></span></span>
+      <span class="marquee-item">32 Voices Selected <span class="dot"></span></span>
+      <span class="marquee-item">1 Question Per Week <span class="dot"></span></span>
+      <span class="marquee-item">0 Algorithms <span class="dot"></span></span>
+      <span class="marquee-item">100% Human <span class="dot"></span></span>
+      <span class="marquee-item">Radically Honest <span class="dot"></span></span>
+      <span class="marquee-item">Deeply Anonymous <span class="dot"></span></span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <section class="stats">
+    <div class="stat" data-delay="0">
+      <div class="stat-number"><span class="counter" data-target="52">0</span></div>
+      <div class="stat-label">Weeks</div>
+    </div>
+    <div class="stat" data-delay="150">
+      <div class="stat-number"><span class="counter" data-target="100">0</span></div>
+      <div class="stat-label">Anonymous Thinkers</div>
+    </div>
+    <div class="stat" data-delay="300">
+      <div class="stat-number"><span class="counter" data-target="1">0</span></div>
+      <div class="stat-label">Question at a Time</div>
+    </div>
+  </section>
+
+  <!-- The Question -->
+  <section class="question-section">
+    <div class="question-text reveal" id="typewriterText">
+      What happens when 100 strangers agree to think deeply, write honestly, and stay anonymous for a full year?<span class="typewriter-cursor"></span>
+    </div>
+    <div class="question-attribution reveal reveal-delay-2">
+      &mdash; The experiment that became a book
+    </div>
+  </section>
+
+  <!-- Scrolling Text -->
+  <div class="scroll-text-section">
+    <div class="scroll-text">
+      Slow Thinking &bull; Deep Questions &bull; Human Connection &bull; Radical Curiosity &bull; Slow Thinking &bull; Deep Questions &bull; Human Connection &bull; Radical Curiosity &bull;&nbsp;
+    </div>
+  </div>
+
+  <!-- About / Concept -->
+  <section class="concept" id="about">
+    <div class="concept-visual">
+      <!-- Placeholder for retro office image -->
+      <div style="width:100%;height:100%;background:linear-gradient(135deg, var(--paper) 0%, #d4cfc1 100%);display:flex;align-items:center;justify-content:center;">
+        <div style="font-family:var(--mono);font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--fax-gray);opacity:0.4;text-align:center;padding:2rem;">
+          [ Retro fax machine image ]<br><br>
+          Replace with your<br>vintage office photography
+        </div>
+      </div>
+    </div>
+    <div class="concept-content">
+      <div class="section-eyebrow reveal">The Experiment</div>
+      <h2 class="reveal reveal-delay-1">A real, quiet revolution.</h2>
+      <p class="reveal reveal-delay-2">
+        For one year, 100 strangers received one question per week. They thought deeply. They wrote honestly. They stayed completely anonymous. No likes. No followers. No algorithms. Just raw, human thinking on paper.
+      </p>
+      <p class="reveal reveal-delay-3">
+        The Fax Club Experiment captures the most powerful moments from 52 weeks of radical curiosity &mdash; distilled into a book that feels like eavesdropping on the most honest conversation you've never been invited to.
+      </p>
+      <a href="https://www.amazon.co.uk/dp/B0F1YFP3QR" target="_blank" class="btn-primary reveal reveal-delay-4"><span>Order Now</span></a>
+    </div>
+  </section>
+
+  <!-- Image Grid -->
+  <section class="image-grid-section" id="gallery">
+    <div class="section-header">
+      <div class="section-eyebrow">The Aesthetic</div>
+      <h2 class="section-title">Vintage design.<br><em>Modern thinking.</em></h2>
+    </div>
+    <div class="image-grid">
+      <div class="grid-item grid-item-1">
+        <div style="width:100%;height:100%;min-height:300px;background:linear-gradient(135deg,#c9c2b0,#a89e8c);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,0,0,0.3);">[ Office with multiple monitors ]</span>
+        </div>
+        <div class="grid-caption">The multi-screen hustle, circa 1994</div>
+      </div>
+      <div class="grid-item grid-item-2">
+        <div style="width:100%;height:100%;min-height:300px;background:linear-gradient(135deg,#b8b0a0,#9e9688);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,0,0,0.3);">[ Cubicle worker on phone ]</span>
+        </div>
+        <div class="grid-caption">Deep in thought, pre-internet</div>
+      </div>
+      <div class="grid-item grid-item-3">
+        <div style="width:100%;height:100%;min-height:350px;background:linear-gradient(135deg,#d1c9b8,#b5ad9c);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,0,0,0.3);">[ Copy room ]</span>
+        </div>
+        <div class="grid-caption">The original cloud storage</div>
+      </div>
+      <div class="grid-item grid-item-4">
+        <div style="width:100%;height:100%;min-height:350px;background:linear-gradient(135deg,#c4bca8,#a8a090);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,0,0,0.3);">[ Woman at typewriter ]</span>
+        </div>
+        <div class="grid-caption">Analog processing power</div>
+      </div>
+      <div class="grid-item grid-item-5">
+        <div style="width:100%;height:100%;min-height:350px;background:linear-gradient(135deg,#bbb4a4,#9f9888);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(0,0,0,0.3);">[ Early computer terminal ]</span>
+        </div>
+        <div class="grid-caption">When bandwidth meant patience</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fax Feed / Testimonials -->
+  <section class="fax-feed" id="voices">
+    <div class="section-header">
+      <div class="section-eyebrow">Incoming Transmissions</div>
+      <h2 class="section-title">What readers are saying.</h2>
+    </div>
+    <div class="fax-cards">
+      <div class="fax-card">
+        <div class="fax-card-text">"Thought-provoking, challenges your values, difficult to put down. This isn't just a book &mdash; it's a mirror."</div>
+        <div class="fax-card-author">Kindle Customer</div>
+      </div>
+      <div class="fax-card">
+        <div class="fax-card-text">"Outstanding idea. Brilliant thought provoking read. The kind of thing the world needs more of right now."</div>
+        <div class="fax-card-author">Rob Robson</div>
+      </div>
+      <div class="fax-card">
+        <div class="fax-card-text">"Fun and inspiring. Easy to pick up. Easy to love. Hard to forget."</div>
+        <div class="fax-card-author">Girl with a Book</div>
+      </div>
+      <div class="fax-card">
+        <div class="fax-card-text">"Essential reading for anyone in a position of influence. If you lead people, read this."</div>
+        <div class="fax-card-author">Tom Kingsley</div>
+      </div>
+      <div class="fax-card">
+        <div class="fax-card-text">"32 voices thinking aloud &mdash; non-polished, non-filtered. Refreshingly real in a world of hot takes."</div>
+        <div class="fax-card-author">Amazon Customer</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Endorsements -->
+  <section class="endorsements" id="press">
+    <div class="section-header">
+      <div class="section-eyebrow">Signal, Not Noise</div>
+      <h2 class="section-title">Endorsed by thinkers<br>who <em>think</em>.</h2>
+    </div>
+    <div class="endorsement-grid">
+      <div class="endorsement" data-delay="0">
+        <div class="endorsement-quote">"A love song to the irreducible value in human individuality and originality of real perspectives."</div>
+        <div class="endorsement-name">Alex Beard</div>
+        <div class="endorsement-title">Author, "Natural Born Learners"</div>
+      </div>
+      <div class="endorsement" data-delay="150">
+        <div class="endorsement-quote">"Honours something more powerful: the transformational space when asking better questions."</div>
+        <div class="endorsement-name">Karen Kimsey-House</div>
+        <div class="endorsement-title">Co-founder, Co-Active Training Institute</div>
+      </div>
+      <div class="endorsement" data-delay="300">
+        <div class="endorsement-quote">"Shows urgently we must assess which digital aspects benefit versus hinder human flourishing."</div>
+        <div class="endorsement-name">Kate Robinson</div>
+        <div class="endorsement-title">Ken Robinson Foundation</div>
+      </div>
+      <div class="endorsement" data-delay="450">
+        <div class="endorsement-quote">"The 32 nailed it. Great read."</div>
+        <div class="endorsement-name">David Hiatt</div>
+        <div class="endorsement-title">Co-Founder, The DO Lectures</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="cta-section">
+    <h2 class="reveal">What if one <em>question</em><br>changed how you think?</h2>
+    <p class="reveal reveal-delay-1">Start with the first. Get the book that asks better questions.</p>
+    <div class="cta-buttons reveal reveal-delay-2">
+      <a href="https://www.amazon.co.uk/dp/B0F1YFP3QR" target="_blank" class="btn-primary"><span>Buy on Amazon</span></a>
+      <a href="#" class="btn-secondary">Free Chapter</a>
+    </div>
+    <div class="newsletter-form reveal reveal-delay-3">
+      <h3>Join the Signal</h3>
+      <p>Very occasional emails. No spam. We hate noise. Just signal.</p>
+      <div class="input-group">
+        <input type="email" placeholder="your@email.com" aria-label="Email address">
+        <button type="button">Subscribe</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-logo">Fax Club</div>
+      <div class="footer-links">
+        <a href="#about">About</a>
+        <a href="#voices">Voices</a>
+        <a href="#press">Press</a>
+        <a href="https://www.amazon.co.uk/dp/B0F1YFP3QR" target="_blank">Buy the Book</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 The Fax Club Experiment. All rights reserved.</span>
+      <div class="social-links">
+        <a href="#" target="_blank">LinkedIn</a>
+        <a href="#" target="_blank">Instagram</a>
+        <a href="#" target="_blank">TikTok</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ==================== PAGE LOADER ====================
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('pageLoader').classList.add('loaded');
+      }, 1500);
+    });
+
+    // ==================== CUSTOM CURSOR ====================
+    const dot = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let mouseX = 0, mouseY = 0;
+    let ringX = 0, ringY = 0;
+
+    if (window.matchMedia('(pointer: fine)').matches) {
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        dot.style.left = mouseX - 4 + 'px';
+        dot.style.top = mouseY - 4 + 'px';
+      });
+
+      function animateRing() {
+        ringX += (mouseX - ringX) * 0.15;
+        ringY += (mouseY - ringY) * 0.15;
+        ring.style.left = ringX - 17.5 + 'px';
+        ring.style.top = ringY - 17.5 + 'px';
+        requestAnimationFrame(animateRing);
+      }
+      animateRing();
+
+      // Hover effect on interactive elements
+      document.querySelectorAll('a, button, .fax-card, .grid-item').forEach(el => {
+        el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+        el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+      });
+    }
+
+    // ==================== NAV HIDE ON SCROLL ====================
+    let lastScroll = 0;
+    const navbar = document.getElementById('navbar');
+
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.pageYOffset;
+      if (currentScroll > lastScroll && currentScroll > 100) {
+        navbar.classList.add('hidden');
+      } else {
+        navbar.classList.remove('hidden');
+      }
+      lastScroll = currentScroll;
+    });
+
+    // ==================== SCROLL REVEAL ====================
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -80px 0px',
+      threshold: 0.1
+    };
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const delay = entry.target.dataset.delay || 0;
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, delay);
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Observe all reveal elements
+    document.querySelectorAll('.reveal, .stat, .endorsement, .grid-item').forEach(el => {
+      revealObserver.observe(el);
+    });
+
+    // ==================== COUNTER ANIMATION ====================
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const counter = entry.target;
+          const target = parseInt(counter.dataset.target);
+          const duration = 1500;
+          const start = performance.now();
+
+          function update(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            counter.textContent = Math.round(eased * target);
+            if (progress < 1) requestAnimationFrame(update);
+          }
+
+          requestAnimationFrame(update);
+          counterObserver.unobserve(counter);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
+
+    // ==================== SMOOTH SCROLL ====================
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // ==================== PARALLAX ON MOUSE MOVE (Hero) ====================
+    const hero = document.querySelector('.hero');
+    if (hero) {
+      hero.addEventListener('mousemove', (e) => {
+        const { clientX, clientY } = e;
+        const { innerWidth, innerHeight } = window;
+        const x = (clientX / innerWidth - 0.5) * 10;
+        const y = (clientY / innerHeight - 0.5) * 10;
+        hero.querySelector('h1').style.transform = `translate(${x}px, ${y}px)`;
+      });
+
+      hero.addEventListener('mouseleave', () => {
+        hero.querySelector('h1').style.transform = 'translate(0, 0)';
+      });
+    }
+
+    // ==================== FAX CARD AUTO-SCROLL ====================
+    const faxCards = document.querySelector('.fax-cards');
+    if (faxCards) {
+      let scrollDirection = 1;
+      let autoScroll;
+
+      function startAutoScroll() {
+        autoScroll = setInterval(() => {
+          faxCards.scrollLeft += scrollDirection * 1;
+          if (faxCards.scrollLeft >= faxCards.scrollWidth - faxCards.clientWidth) {
+            scrollDirection = -1;
+          } else if (faxCards.scrollLeft <= 0) {
+            scrollDirection = 1;
+          }
+        }, 30);
+      }
+
+      function stopAutoScroll() {
+        clearInterval(autoScroll);
+      }
+
+      // Start when section is visible
+      const faxObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) startAutoScroll();
+          else stopAutoScroll();
+        });
+      });
+      faxObserver.observe(document.querySelector('.fax-feed'));
+
+      faxCards.addEventListener('mouseenter', stopAutoScroll);
+      faxCards.addEventListener('mouseleave', startAutoScroll);
+    }
+  </script>
+</body>
+</html>
