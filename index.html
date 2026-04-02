@@ -1396,6 +1396,337 @@
       .loader-coords { bottom: 1.5rem; left: 1.5rem; }
       .loader-version { bottom: 1.5rem; right: 1.5rem; }
     }
+    /* ==================== IDLE FAX MACHINE ==================== */
+    .fax-idle {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+      cursor: pointer;
+    }
+
+    .fax-idle.active { opacity: 1; visibility: visible; }
+
+    .fax-idle-bg {
+      position: absolute;
+      inset: 0;
+      background: rgba(10,10,9,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* Incoming toast */
+    .fax-toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      z-index: 9001;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0;
+      transition: all 0.4s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .fax-toast.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .fax-toast .toast-blink {
+      animation: blink 0.5s step-end infinite;
+    }
+
+    /* Machine + paper container */
+    .fax-stage {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 340px;
+      max-width: 90vw;
+    }
+
+    /* The paper that comes out */
+    .fax-paper-wrap {
+      width: 280px;
+      max-width: 80vw;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    .fax-paper {
+      background: #F5F0E0;
+      color: #1A1A18;
+      padding: 1.8rem 1.5rem;
+      font-family: var(--mono);
+      transform: translateY(-100%);
+      transition: transform 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+      min-height: 200px;
+    }
+
+    .fax-paper.printing { transform: translateY(0); }
+
+    .fax-paper.falling {
+      transition: transform 0.8s cubic-bezier(0.55, 0.06, 0.68, 0.19), opacity 0.5s ease 0.3s;
+      transform: translateY(120vh) rotate(3deg);
+      opacity: 0;
+    }
+
+    /* Perforated top edge */
+    .fax-paper::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 8px;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent 0,
+        transparent 4px,
+        #F5F0E0 4px,
+        #F5F0E0 6px,
+        transparent 6px,
+        transparent 10px
+      );
+      margin-top: -8px;
+    }
+
+    /* Thermal paper noise */
+    .fax-paper::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    .fax-header {
+      border-bottom: 1px solid rgba(0,0,0,0.12);
+      padding-bottom: 0.8rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .fax-header-left {
+      font-size: 0.45rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.35);
+      line-height: 1.8;
+    }
+
+    .fax-header-right {
+      text-align: right;
+      font-size: 0.45rem;
+      letter-spacing: 0.1em;
+      color: rgba(0,0,0,0.3);
+      line-height: 1.8;
+    }
+
+    .fax-header-title {
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: rgba(0,0,0,0.5);
+      text-transform: uppercase;
+    }
+
+    .fax-excerpt {
+      font-family: var(--serif);
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: #1A1A18;
+      font-style: italic;
+      margin-bottom: 1rem;
+      opacity: 0;
+      transition: opacity 0.8s ease 0.6s;
+    }
+
+    .fax-paper.printing .fax-excerpt { opacity: 1; }
+
+    .fax-source {
+      font-size: 0.48rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.3);
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(0,0,0,0.08);
+      opacity: 0;
+      transition: opacity 0.6s ease 1.2s;
+    }
+
+    .fax-paper.printing .fax-source { opacity: 1; }
+
+    /* The fax machine body (CSS art) */
+    .fax-machine {
+      width: 300px;
+      max-width: 85vw;
+      position: relative;
+      z-index: 2;
+    }
+
+    .fax-machine-body {
+      background: linear-gradient(180deg, #D4D0C8 0%, #C8C4BA 40%, #BAB6AC 100%);
+      border-radius: 6px 6px 4px 4px;
+      padding: 1rem 1.2rem 0.8rem;
+      position: relative;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+    }
+
+    /* Paper slot */
+    .fax-slot {
+      width: 80%;
+      height: 6px;
+      margin: 0 auto 0.8rem;
+      background: #2A2A28;
+      border-radius: 1px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    /* Display screen */
+    .fax-screen {
+      width: 60%;
+      height: 22px;
+      margin: 0 auto 0.6rem;
+      background: #4A6A3A;
+      border: 1px solid #3A5A2A;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .fax-screen-text {
+      font-family: var(--mono);
+      font-size: 0.4rem;
+      letter-spacing: 0.15em;
+      color: #A0D890;
+      text-transform: uppercase;
+      text-shadow: 0 0 4px rgba(160,216,144,0.5);
+    }
+
+    /* Buttons row */
+    .fax-buttons {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .fax-btn {
+      width: 16px; height: 10px;
+      border-radius: 2px;
+      background: #9A968E;
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    .fax-btn:nth-child(1) { background: #8A4A2A; }
+    .fax-btn:nth-child(2) { background: #6A8A4A; }
+
+    /* Status light */
+    .fax-light {
+      position: absolute;
+      top: 0.6rem; right: 1rem;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #666;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+    }
+
+    .fax-light.on {
+      background: #E84A30;
+      box-shadow: 0 0 6px rgba(232,74,48,0.6), 0 0 0 1px rgba(232,74,48,0.3);
+      animation: lightPulse 1s ease infinite;
+    }
+
+    @keyframes lightPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Brand badge */
+    .fax-brand {
+      text-align: center;
+      margin-top: 0.3rem;
+      font-family: var(--mono);
+      font-size: 0.35rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.2);
+    }
+
+    /* Machine base/feet */
+    .fax-base {
+      width: 310px;
+      max-width: 87vw;
+      height: 8px;
+      background: linear-gradient(180deg, #AAA69E, #9A968E);
+      border-radius: 0 0 4px 4px;
+      margin: 0 auto;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    /* Dismiss hint */
+    .fax-dismiss {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(240,235,224,0.2);
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.5s ease 2s;
+    }
+
+    .fax-idle.active .fax-dismiss { opacity: 1; }
+
+    /* Fax counter */
+    .fax-counter {
+      position: absolute;
+      top: 2rem; right: 2rem;
+      font-family: var(--mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.15em;
+      color: rgba(240,235,224,0.15);
+      z-index: 2;
+    }
+
+    @media (max-width: 768px) {
+      .fax-stage { width: 280px; }
+      .fax-paper-wrap { width: 240px; }
+      .fax-machine { width: 260px; }
+      .fax-base { width: 270px; }
+      .fax-paper { padding: 1.4rem 1.2rem; }
+      .fax-excerpt { font-size: 0.85rem; }
+    }
+
+    @media (max-width: 480px) {
+      .fax-stage { width: 260px; }
+      .fax-paper-wrap { width: 220px; }
+      .fax-machine { width: 240px; }
+      .fax-base { width: 250px; }
+    }
   </style>
 </head>
 <body>
@@ -1445,6 +1776,66 @@
   </div>
 
   <div class="grain"></div>
+
+  <!-- Idle Fax Machine -->
+  <div class="fax-toast" id="faxToast">
+    <span class="toast-blink">&bull;</span> Incoming Fax Transmission
+  </div>
+
+  <div class="fax-idle" id="faxIdle">
+    <div class="fax-idle-bg"></div>
+    <div class="fax-stage">
+      <!-- Paper comes out above the machine -->
+      <div class="fax-paper-wrap">
+        <div class="fax-paper" id="faxPaper">
+          <div class="fax-header">
+            <div class="fax-header-left">
+              <div class="fax-header-title">Fax Club Transmission</div>
+              <div id="faxDate">02/04/2026 — 14:32</div>
+              <div>From: Anonymous</div>
+            </div>
+            <div class="fax-header-right">
+              <div>Page <span id="faxPage">1</span>/1</div>
+              <div>CONFIDENTIAL</div>
+            </div>
+          </div>
+          <div class="fax-excerpt" id="faxExcerpt">
+            We spend our lives being watched, measured, optimised. What happens when you strip all that away and just... think? Something strange. Something honest. Something the algorithm can't predict.
+          </div>
+          <div class="fax-source">
+            — Excerpt from The Fax Club Experiment
+          </div>
+        </div>
+      </div>
+
+      <!-- The fax machine -->
+      <div class="fax-machine">
+        <div class="fax-machine-body">
+          <div class="fax-light" id="faxLight"></div>
+          <div class="fax-slot"></div>
+          <div class="fax-screen">
+            <span class="fax-screen-text" id="faxScreenText">STANDBY</span>
+          </div>
+          <div class="fax-buttons">
+            <div class="fax-btn"></div>
+            <div class="fax-btn"></div>
+            <div class="fax-btn"></div>
+            <div class="fax-btn"></div>
+            <div class="fax-btn"></div>
+            <div class="fax-btn"></div>
+            <div class="fax-btn"></div>
+            <div class="fax-btn"></div>
+          </div>
+          <div class="fax-brand">FAXCLUB&trade; Model FC-52</div>
+        </div>
+        <div class="fax-base"></div>
+      </div>
+    </div>
+
+    <div class="fax-counter" id="faxCounter"></div>
+    <div class="fax-dismiss">Click anywhere to return</div>
+  </div>
+
   <div class="cursor-dot" id="dot"></div>
   <div class="cursor-ring" id="ring"></div>
 
@@ -1969,6 +2360,135 @@
       }, { rootMargin: '200px' });
       document.querySelectorAll('img[loading="lazy"]').forEach(img => imgObs.observe(img));
     }
+    // ==================== IDLE FAX MACHINE ====================
+    (function idleFax() {
+      const IDLE_TIME = 5000;
+      const PRINT_DURATION = 2200;
+      const READ_DURATION = 5000;
+      const FALL_DURATION = 1200;
+      const PAUSE_BETWEEN = 1500;
+
+      const excerpts = [
+        "We spend our lives being watched, measured, optimised. What happens when you strip all that away and just\u2026 think? Something strange. Something honest. Something the algorithm can\u2019t predict.",
+        "The fax machine doesn\u2019t care who you are. It doesn\u2019t know your follower count. It just receives the signal and prints the truth, one page at a time.",
+        "Week 17. The question was simple: \u2018What are you afraid to say out loud?\u2019 Nobody held back. When you\u2019re anonymous, courage comes easier.",
+        "One hundred strangers agreed to think deeply for a year. No names. No faces. No likes. Just questions, answers, and the space between them.",
+        "The best ideas don\u2019t arrive on screens. They arrive on paper, in silence, when nobody\u2019s performing for an audience that doesn\u2019t exist.",
+        "Week 34. Someone wrote: \u2018I\u2019ve spent my whole career building things that make people scroll faster. This is the first thing that made me stop.\u2019",
+        "Somewhere between the dial tone and the printout, something human survived. This book is the proof.",
+      ];
+
+      const faxIdle = document.getElementById('faxIdle');
+      const faxToast = document.getElementById('faxToast');
+      const faxPaper = document.getElementById('faxPaper');
+      const faxExcerpt = document.getElementById('faxExcerpt');
+      const faxLight = document.getElementById('faxLight');
+      const faxScreenText = document.getElementById('faxScreenText');
+      const faxDate = document.getElementById('faxDate');
+      const faxPage = document.getElementById('faxPage');
+      const faxCounter = document.getElementById('faxCounter');
+
+      let idleTimer = null;
+      let isActive = false;
+      let faxCount = 0;
+      let excerptIndex = 0;
+      let cycleTimer = null;
+      let loaderDone = false;
+
+      // Don't start idle detection until loader is done
+      setTimeout(() => { loaderDone = true; resetIdle(); }, 4000);
+
+      function resetIdle() {
+        if (!loaderDone) return;
+        clearTimeout(idleTimer);
+        if (isActive) return;
+        idleTimer = setTimeout(startFax, IDLE_TIME);
+      }
+
+      // Track all interaction
+      ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'touchmove'].forEach(evt => {
+        document.addEventListener(evt, () => {
+          if (isActive) {
+            dismissFax();
+          } else {
+            resetIdle();
+          }
+        }, { passive: true });
+      });
+
+      function startFax() {
+        if (isActive) return;
+        isActive = true;
+
+        // Show toast first
+        faxToast.classList.add('show');
+        faxScreenText.textContent = 'RECEIVING';
+        faxLight.classList.add('on');
+
+        setTimeout(() => {
+          faxToast.classList.remove('show');
+          // Show the overlay
+          faxIdle.classList.add('active');
+          // Start printing cycle
+          setTimeout(() => printFax(), 400);
+        }, 1200);
+      }
+
+      function printFax() {
+        if (!isActive) return;
+
+        // Update content
+        const now = new Date();
+        faxDate.textContent = now.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
+          ' \u2014 ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        faxExcerpt.textContent = excerpts[excerptIndex % excerpts.length];
+        faxPage.textContent = (faxCount + 1);
+        faxScreenText.textContent = 'PRINTING';
+
+        // Reset paper state
+        faxPaper.classList.remove('falling');
+        faxPaper.classList.remove('printing');
+        // Force reflow
+        void faxPaper.offsetHeight;
+
+        // Print it
+        faxPaper.classList.add('printing');
+        faxCount++;
+        excerptIndex++;
+        faxCounter.textContent = 'FAXES RECEIVED: ' + String(faxCount).padStart(3, '0');
+
+        // After reading time, drop the paper
+        cycleTimer = setTimeout(() => {
+          if (!isActive) return;
+          faxScreenText.textContent = 'COMPLETE';
+
+          setTimeout(() => {
+            if (!isActive) return;
+            faxPaper.classList.add('falling');
+            faxScreenText.textContent = 'STANDBY';
+
+            // After fall, print next one
+            cycleTimer = setTimeout(() => {
+              if (!isActive) return;
+              faxScreenText.textContent = 'RECEIVING';
+              setTimeout(() => printFax(), 600);
+            }, FALL_DURATION + PAUSE_BETWEEN);
+          }, 600);
+
+        }, PRINT_DURATION + READ_DURATION);
+      }
+
+      function dismissFax() {
+        isActive = false;
+        clearTimeout(cycleTimer);
+        faxToast.classList.remove('show');
+        faxIdle.classList.remove('active');
+        faxPaper.classList.remove('printing', 'falling');
+        faxLight.classList.remove('on');
+        faxScreenText.textContent = 'STANDBY';
+        resetIdle();
+      }
+    })();
   </script>
 </body>
 </html>
