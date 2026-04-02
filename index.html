@@ -13,18 +13,23 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --cream: #FAF6EE;
-      --warm-white: #F5F0E6;
+      --cream: #F7F1E3;
+      --warm-white: #EDE6D4;
       --ink: #1A1A18;
       --fax-gray: #2C2C2A;
       --amber: #C4913B;
       --amber-light: #E8C97A;
+      --rust: #A0522D;
+      --avocado: #6B7B3A;
+      --burnt-orange: #CC6633;
+      --mustard: #D4A030;
       --olive: #4A5A3C;
-      --paper: #EDE8DA;
-      --red-accent: #B8413C;
+      --paper: #E8E0CC;
+      --brown-70s: #8B6914;
       --mono: 'Space Mono', monospace;
       --serif: 'Instrument Serif', Georgia, serif;
       --sans: 'Inter', -apple-system, sans-serif;
+      --amazon-link: "https://www.amazon.co.uk/dp/1036933075/ref=cm_sw_r_as_gl_apa_gl_i_673TWT0V9RRPSN0W3ECC?linkCode=ml1&tag=thefaxclubexp-21&linkId=cdbc4ad60826b236d763a8cfebd5cbe8";
     }
 
     html { scroll-behavior: smooth; }
@@ -87,7 +92,7 @@
       justify-content: space-between;
       align-items: center;
       backdrop-filter: blur(12px);
-      background: rgba(250, 246, 238, 0.85);
+      background: rgba(247, 241, 227, 0.85);
       border-bottom: 1px solid rgba(0,0,0,0.06);
       transition: transform 0.3s ease;
     }
@@ -116,28 +121,34 @@
       transition: color 0.2s;
     }
 
-    .nav-links a:hover { color: var(--amber); }
+    .nav-links a:hover { color: var(--burnt-orange); }
 
     .nav-cta {
-      background: var(--ink) !important;
+      background: var(--rust) !important;
       color: var(--cream) !important;
       padding: 0.6rem 1.4rem !important;
       border-radius: 0 !important;
       transition: background 0.2s !important;
     }
 
-    .nav-cta:hover { background: var(--amber) !important; }
+    .nav-cta:hover { background: var(--burnt-orange) !important; }
 
     /* ==================== HERO ==================== */
     .hero {
       min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-content {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 8rem 2rem 4rem;
+      padding: 8rem 4rem 4rem;
       position: relative;
+      z-index: 2;
     }
 
     .hero-badge {
@@ -145,7 +156,7 @@
       font-size: 0.65rem;
       letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: var(--amber);
+      color: var(--burnt-orange);
       margin-bottom: 2rem;
       opacity: 0;
       animation: fadeUp 0.8s ease forwards 0.3s;
@@ -153,10 +164,10 @@
 
     .hero h1 {
       font-family: var(--serif);
-      font-size: clamp(3rem, 8vw, 7rem);
-      line-height: 1.05;
+      font-size: clamp(2.5rem, 5vw, 5rem);
+      line-height: 1.08;
       font-weight: 400;
-      max-width: 900px;
+      max-width: 600px;
       margin-bottom: 1.5rem;
       opacity: 0;
       animation: fadeUp 0.8s ease forwards 0.5s;
@@ -164,27 +175,95 @@
 
     .hero h1 em {
       font-style: italic;
-      color: var(--amber);
+      color: var(--burnt-orange);
     }
 
     .hero-sub {
       font-family: var(--mono);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       line-height: 1.8;
-      max-width: 500px;
+      max-width: 420px;
       color: var(--fax-gray);
       opacity: 0;
       animation: fadeUp 0.8s ease forwards 0.7s;
     }
 
     .hero-cta-group {
-      margin-top: 3rem;
+      margin-top: 2.5rem;
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
-      justify-content: center;
       opacity: 0;
       animation: fadeUp 0.8s ease forwards 0.9s;
+    }
+
+    .hero-image {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: contrast(1.05) brightness(0.95);
+    }
+
+    .hero-image-badge {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--cream);
+      background: rgba(26,26,24,0.65);
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1rem;
+      opacity: 0;
+      animation: fadeIn 0.6s ease forwards 1.2s;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2rem;
+      left: 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1.2s;
+      z-index: 2;
+    }
+
+    .hero-scroll span {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fax-gray);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: var(--fax-gray);
+      animation: scrollPulse 2s ease infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.5); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    .affiliate-note {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      color: rgba(0,0,0,0.35);
+      letter-spacing: 0.05em;
+      margin-top: 0.4rem;
     }
 
     .btn-primary {
@@ -193,7 +272,7 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 1rem 2.5rem;
-      background: var(--ink);
+      background: var(--rust);
       color: var(--cream);
       border: none;
       cursor: pointer;
@@ -208,7 +287,7 @@
       position: absolute;
       top: 0; left: -100%;
       width: 100%; height: 100%;
-      background: var(--amber);
+      background: var(--burnt-orange);
       transition: left 0.3s ease;
       z-index: 0;
     }
@@ -233,39 +312,6 @@
     .btn-secondary:hover {
       background: var(--ink);
       color: var(--cream);
-    }
-
-    .hero-scroll {
-      position: absolute;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      opacity: 0;
-      animation: fadeUp 0.8s ease forwards 1.2s;
-    }
-
-    .hero-scroll span {
-      font-family: var(--mono);
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--fax-gray);
-    }
-
-    .scroll-line {
-      width: 1px;
-      height: 40px;
-      background: var(--fax-gray);
-      animation: scrollPulse 2s ease infinite;
-    }
-
-    @keyframes scrollPulse {
-      0%, 100% { opacity: 0.3; transform: scaleY(0.5); }
-      50% { opacity: 1; transform: scaleY(1); }
     }
 
     /* ==================== MARQUEE ==================== */
@@ -298,7 +344,7 @@
       display: inline-block;
       width: 4px;
       height: 4px;
-      background: var(--amber);
+      background: var(--burnt-orange);
       border-radius: 50%;
       margin-left: 3rem;
       vertical-align: middle;
@@ -307,6 +353,72 @@
     @keyframes marquee {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
+    }
+
+    /* ==================== BOOK SHOWCASE (below marquee) ==================== */
+    .book-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 70vh;
+      background: var(--ink);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .book-showcase-image {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .book-showcase-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: contrast(1.1) brightness(0.9);
+    }
+
+    .book-showcase-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5rem;
+      color: var(--cream);
+    }
+
+    .book-showcase-content .section-eyebrow {
+      color: var(--mustard);
+      margin-bottom: 1.5rem;
+    }
+
+    .book-showcase-content h2 {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 3.5vw, 3.5rem);
+      font-weight: 400;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+
+    .book-showcase-content h2 em {
+      font-style: italic;
+      color: var(--mustard);
+    }
+
+    .book-showcase-content p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.7);
+      max-width: 420px;
+      margin-bottom: 1.5rem;
+    }
+
+    .book-showcase-content .btn-primary {
+      align-self: flex-start;
+      margin-top: 0.5rem;
+      background: var(--mustard);
+    }
+
+    .book-showcase-content .btn-primary::before {
+      background: var(--burnt-orange);
     }
 
     /* ==================== STATS ==================== */
@@ -325,14 +437,12 @@
       transform: translateY(30px);
     }
 
-    .stat.visible {
-      animation: fadeUp 0.6s ease forwards;
-    }
+    .stat.visible { animation: fadeUp 0.6s ease forwards; }
 
     .stat-number {
       font-family: var(--serif);
       font-size: clamp(3rem, 6vw, 5rem);
-      color: var(--amber);
+      color: var(--burnt-orange);
       line-height: 1;
       margin-bottom: 0.5rem;
     }
@@ -380,7 +490,7 @@
       display: inline-block;
       width: 3px;
       height: 1em;
-      background: var(--amber);
+      background: var(--mustard);
       margin-left: 4px;
       animation: blink 1s step-end infinite;
       vertical-align: text-bottom;
@@ -396,14 +506,12 @@
       font-size: 0.7rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: var(--amber);
+      color: var(--mustard);
       margin-top: 3rem;
     }
 
     /* ==================== IMAGE GRID ==================== */
-    .image-grid-section {
-      padding: 6rem 2rem;
-    }
+    .image-grid-section { padding: 6rem 2rem; }
 
     .image-grid-section .section-header {
       text-align: center;
@@ -415,7 +523,7 @@
       font-size: 0.65rem;
       letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: var(--amber);
+      color: var(--burnt-orange);
       margin-bottom: 1rem;
     }
 
@@ -444,21 +552,18 @@
       transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .grid-item.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .grid-item.visible { opacity: 1; transform: translateY(0); }
 
     .grid-item img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: sepia(20%) contrast(1.05) brightness(0.95);
+      filter: sepia(25%) contrast(1.05) brightness(0.92) saturate(0.9);
       transition: all 0.6s ease;
     }
 
     .grid-item:hover img {
-      filter: sepia(0%) contrast(1.1) brightness(1);
+      filter: sepia(10%) contrast(1.1) brightness(1) saturate(1);
       transform: scale(1.05);
     }
 
@@ -482,9 +587,7 @@
       transition: transform 0.4s ease;
     }
 
-    .grid-item:hover .grid-caption {
-      transform: translateY(0);
-    }
+    .grid-item:hover .grid-caption { transform: translateY(0); }
 
     /* ==================== ABOUT / CONCEPT ==================== */
     .concept {
@@ -504,7 +607,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: sepia(15%) contrast(1.05);
+      filter: sepia(20%) contrast(1.05) saturate(0.9);
     }
 
     .concept-content {
@@ -548,7 +651,7 @@
       margin-bottom: 4rem;
     }
 
-    .fax-feed .section-eyebrow { color: var(--amber-light); }
+    .fax-feed .section-eyebrow { color: var(--mustard); }
     .fax-feed .section-title { color: var(--cream); }
 
     .fax-cards {
@@ -574,11 +677,12 @@
       scroll-snap-align: start;
       position: relative;
       transition: all 0.3s ease;
+      flex-shrink: 0;
     }
 
     .fax-card:hover {
       background: rgba(255,255,255,0.08);
-      border-color: var(--amber);
+      border-color: var(--mustard);
     }
 
     .fax-card::before {
@@ -589,7 +693,7 @@
       font-family: var(--mono);
       font-size: 0.55rem;
       letter-spacing: 0.3em;
-      color: var(--amber);
+      color: var(--mustard);
       opacity: 0.5;
     }
 
@@ -607,7 +711,7 @@
       font-size: 0.65rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: var(--amber-light);
+      color: var(--mustard);
     }
 
     /* ==================== ENDORSEMENTS ==================== */
@@ -635,9 +739,7 @@
       transform: translateY(30px);
     }
 
-    .endorsement.visible {
-      animation: fadeUp 0.6s ease forwards;
-    }
+    .endorsement.visible { animation: fadeUp 0.6s ease forwards; }
 
     .endorsement-quote {
       font-family: var(--serif);
@@ -661,7 +763,7 @@
       font-family: var(--mono);
       font-size: 0.6rem;
       letter-spacing: 0.1em;
-      color: var(--amber);
+      color: var(--burnt-orange);
       margin-top: 0.3rem;
     }
 
@@ -684,10 +786,10 @@
 
     .cta-section h2 em {
       font-style: italic;
-      color: var(--amber);
+      color: var(--burnt-orange);
     }
 
-    .cta-section p {
+    .cta-section > p {
       font-family: var(--mono);
       font-size: 0.8rem;
       line-height: 1.8;
@@ -701,6 +803,14 @@
       gap: 1rem;
       justify-content: center;
       flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .cta-affiliate {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      color: rgba(0,0,0,0.35);
+      letter-spacing: 0.05em;
       margin-bottom: 4rem;
     }
 
@@ -723,12 +833,10 @@
     .newsletter-form p {
       font-size: 0.85rem;
       margin-bottom: 1.5rem;
+      color: var(--fax-gray);
     }
 
-    .input-group {
-      display: flex;
-      gap: 0;
-    }
+    .input-group { display: flex; gap: 0; }
 
     .input-group input {
       flex: 1;
@@ -742,13 +850,13 @@
       transition: border-color 0.2s;
     }
 
-    .input-group input:focus { border-color: var(--amber); }
+    .input-group input:focus { border-color: var(--burnt-orange); }
 
     .input-group button {
       padding: 1rem 2rem;
-      background: var(--ink);
+      background: var(--rust);
       color: var(--cream);
-      border: 1px solid var(--ink);
+      border: 1px solid var(--rust);
       font-family: var(--mono);
       font-size: 0.7rem;
       letter-spacing: 0.1em;
@@ -757,98 +865,7 @@
       transition: background 0.2s;
     }
 
-    .input-group button:hover { background: var(--amber); border-color: var(--amber); }
-
-    /* ==================== PARALLAX STRIP ==================== */
-    .parallax-strip {
-      height: 60vh;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .parallax-strip .bg {
-      position: absolute;
-      inset: -20%;
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      filter: sepia(25%) brightness(0.6) contrast(1.1);
-    }
-
-    .parallax-strip .overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(26,26,24,0.55);
-    }
-
-    .parallax-strip .content {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      color: var(--cream);
-      padding: 2rem;
-    }
-
-    .parallax-strip .content h2 {
-      font-family: var(--serif);
-      font-size: clamp(2rem, 4vw, 3.5rem);
-      font-weight: 400;
-      line-height: 1.2;
-      max-width: 600px;
-    }
-
-    .parallax-strip .content h2 em {
-      font-style: italic;
-      color: var(--amber-light);
-    }
-
-    /* ==================== DUAL IMAGE STRIP ==================== */
-    .dual-strip {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      height: 50vh;
-      min-height: 400px;
-    }
-
-    .dual-strip .strip-panel {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .dual-strip .strip-panel img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: sepia(15%) contrast(1.05) brightness(0.95);
-      transition: all 0.8s ease;
-    }
-
-    .dual-strip .strip-panel:hover img {
-      filter: sepia(0%) contrast(1.1) brightness(1);
-      transform: scale(1.03);
-    }
-
-    .dual-strip .strip-label {
-      position: absolute;
-      bottom: 2rem;
-      left: 2rem;
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--cream);
-      background: rgba(26,26,24,0.6);
-      backdrop-filter: blur(4px);
-      padding: 0.6rem 1.2rem;
-    }
-
-    @media (max-width: 768px) {
-      .dual-strip { grid-template-columns: 1fr; height: auto; }
-      .dual-strip .strip-panel { height: 40vh; }
-    }
+    .input-group button:hover { background: var(--burnt-orange); border-color: var(--burnt-orange); }
 
     /* ==================== HERO IMAGE MOSAIC ==================== */
     .hero-mosaic {
@@ -867,28 +884,70 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: sepia(20%) contrast(1.05) brightness(0.9);
+      filter: sepia(25%) contrast(1.05) brightness(0.88) saturate(0.85);
       transition: all 0.6s ease;
     }
 
     .hero-mosaic .mosaic-item:hover img {
-      filter: sepia(0%) contrast(1.1) brightness(1);
+      filter: sepia(10%) contrast(1.1) brightness(1) saturate(1);
       transform: scale(1.05);
     }
 
-    .hero-mosaic .mosaic-item:first-child {
-      grid-row: 1 / 3;
+    .hero-mosaic .mosaic-item:first-child { grid-row: 1 / 3; }
+
+    /* ==================== 70s DIVIDER ==================== */
+    .retro-divider {
+      padding: 3rem 2rem;
+      background: var(--rust);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    @media (max-width: 768px) {
-      .hero-mosaic {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 30vh 30vh 30vh;
-      }
-      .hero-mosaic .mosaic-item:first-child {
-        grid-column: 1 / -1;
-        grid-row: auto;
-      }
+    .retro-divider::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--mustard) 0,
+        var(--mustard) 30px,
+        var(--burnt-orange) 30px,
+        var(--burnt-orange) 60px,
+        var(--avocado) 60px,
+        var(--avocado) 90px,
+        var(--brown-70s) 90px,
+        var(--brown-70s) 120px
+      );
+    }
+
+    .retro-divider::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 6px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--mustard) 0,
+        var(--mustard) 30px,
+        var(--burnt-orange) 30px,
+        var(--burnt-orange) 60px,
+        var(--avocado) 60px,
+        var(--avocado) 90px,
+        var(--brown-70s) 90px,
+        var(--brown-70s) 120px
+      );
+    }
+
+    .retro-divider p {
+      font-family: var(--serif);
+      font-size: clamp(1.3rem, 3vw, 2.2rem);
+      font-style: italic;
+      color: var(--cream);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.4;
     }
 
     /* ==================== HORIZONTAL SCROLL TEXT ==================== */
@@ -904,13 +963,71 @@
       font-weight: 400;
       white-space: nowrap;
       color: transparent;
-      -webkit-text-stroke: 1px rgba(26,26,24,0.15);
+      -webkit-text-stroke: 1px rgba(26,26,24,0.12);
       animation: scrollText 20s linear infinite;
     }
 
     @keyframes scrollText {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
+    }
+
+    /* ==================== FLOATING BUY BUTTON ==================== */
+    .floating-buy {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 99;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.3rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease;
+      pointer-events: none;
+    }
+
+    .floating-buy.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .floating-buy-link {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      background: var(--rust);
+      color: var(--cream);
+      text-decoration: none;
+      padding: 0.9rem 1.6rem;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+
+    .floating-buy-link:hover {
+      background: var(--burnt-orange);
+      box-shadow: 0 6px 28px rgba(0,0,0,0.3);
+      transform: translateY(-2px);
+    }
+
+    .floating-buy-link svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    .floating-buy-note {
+      font-family: var(--mono);
+      font-size: 0.5rem;
+      color: rgba(0,0,0,0.35);
+      letter-spacing: 0.05em;
     }
 
     /* ==================== FOOTER ==================== */
@@ -940,10 +1057,7 @@
       text-transform: uppercase;
     }
 
-    .footer-links {
-      display: flex;
-      gap: 2rem;
-    }
+    .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
 
     .footer-links a {
       font-family: var(--mono);
@@ -955,7 +1069,7 @@
       transition: color 0.2s;
     }
 
-    .footer-links a:hover { color: var(--amber-light); }
+    .footer-links a:hover { color: var(--mustard); }
 
     .footer-bottom {
       max-width: 1200px;
@@ -968,17 +1082,14 @@
       gap: 1rem;
     }
 
-    .footer-bottom span {
+    .footer-bottom span, .footer-bottom .footer-affiliate {
       font-family: var(--mono);
       font-size: 0.6rem;
       letter-spacing: 0.1em;
       color: rgba(255,255,255,0.3);
     }
 
-    .social-links {
-      display: flex;
-      gap: 1.5rem;
-    }
+    .social-links { display: flex; gap: 1.5rem; }
 
     .social-links a {
       font-family: var(--mono);
@@ -990,7 +1101,7 @@
       transition: color 0.2s;
     }
 
-    .social-links a:hover { color: var(--amber-light); }
+    .social-links a:hover { color: var(--mustard); }
 
     /* ==================== ANIMATIONS ==================== */
     @keyframes fadeUp {
@@ -1004,13 +1115,28 @@
     }
 
     /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-content { padding: 7rem 2rem 3rem; text-align: center; align-items: center; }
+      .hero-image { height: 50vh; }
+      .hero-scroll { left: 50%; transform: translateX(-50%); }
+      .hero h1 { font-size: clamp(2.5rem, 7vw, 4.5rem); }
+      .hero-cta-group { justify-content: center; }
+      .book-showcase { grid-template-columns: 1fr; }
+      .book-showcase-image { height: 50vh; }
+      .book-showcase-content { padding: 4rem 2rem; text-align: center; align-items: center; }
+      .book-showcase-content p { max-width: 100%; }
+    }
+
     @media (max-width: 768px) {
       .concept { grid-template-columns: 1fr; }
+      .concept-visual { height: 50vh; }
       .concept-content { padding: 4rem 2rem; }
-      .stats { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+      .stats { grid-template-columns: repeat(3, 1fr); gap: 1rem; padding: 4rem 1.5rem; }
       .image-grid {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto;
+        gap: 0.75rem;
       }
       .grid-item-1 { grid-column: 1 / -1; }
       .grid-item-2 { grid-column: 1 / -1; }
@@ -1020,13 +1146,46 @@
       .nav-links { display: none; }
       .fax-card { min-width: 280px; }
       .endorsement-grid { grid-template-columns: 1fr; }
+      .hero-mosaic {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 25vh 25vh 25vh;
+      }
+      .hero-mosaic .mosaic-item:first-child {
+        grid-column: 1 / -1;
+        grid-row: auto;
+      }
+      .floating-buy { bottom: 1rem; right: 1rem; }
+      .floating-buy-link { padding: 0.75rem 1.2rem; font-size: 0.65rem; }
+      .question-section { padding: 5rem 1.5rem; }
+      .fax-feed { padding: 5rem 1.5rem; }
+      .endorsements { padding: 5rem 1.5rem; }
+      .cta-section { padding: 5rem 1.5rem; }
+      .retro-divider { padding: 2.5rem 1.5rem; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-content { padding: 6rem 1.5rem 2rem; }
+      .hero h1 { font-size: 2.2rem; }
+      .hero-sub { font-size: 0.75rem; }
+      .btn-primary, .btn-secondary { padding: 0.85rem 1.8rem; font-size: 0.7rem; }
+      .stat-number { font-size: 2.5rem; }
+      .stat-label { font-size: 0.55rem; }
+      .fax-card { min-width: 260px; padding: 2rem; }
+      .input-group { flex-direction: column; }
+      .input-group input { border-right: 1px solid rgba(0,0,0,0.15); border-bottom: none; }
+      .hero-mosaic {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(3, 30vh);
+      }
+      .hero-mosaic .mosaic-item:nth-child(4),
+      .hero-mosaic .mosaic-item:nth-child(5) { display: none; }
     }
 
     /* ==================== CUSTOM CURSOR ==================== */
     @media (pointer: fine) {
       .cursor-dot {
         width: 8px; height: 8px;
-        background: var(--amber);
+        background: var(--burnt-orange);
         border-radius: 50%;
         position: fixed;
         pointer-events: none;
@@ -1037,7 +1196,7 @@
 
       .cursor-ring {
         width: 35px; height: 35px;
-        border: 1px solid var(--amber);
+        border: 1px solid var(--burnt-orange);
         border-radius: 50%;
         position: fixed;
         pointer-events: none;
@@ -1049,7 +1208,7 @@
       .cursor-ring.hover {
         width: 55px; height: 55px;
         border-color: var(--cream);
-        background: rgba(196, 145, 59, 0.1);
+        background: rgba(204, 102, 51, 0.1);
       }
     }
 
@@ -1065,17 +1224,14 @@
       transition: opacity 0.5s ease, visibility 0.5s ease;
     }
 
-    .page-loader.loaded {
-      opacity: 0;
-      visibility: hidden;
-    }
+    .page-loader.loaded { opacity: 0; visibility: hidden; }
 
     .loader-text {
       font-family: var(--mono);
       font-size: 0.8rem;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: var(--amber);
+      color: var(--mustard);
     }
 
     .loader-text span {
@@ -1107,10 +1263,7 @@
       transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
 
     .reveal-delay-1 { transition-delay: 0.1s; }
     .reveal-delay-2 { transition-delay: 0.2s; }
@@ -1118,13 +1271,8 @@
     .reveal-delay-4 { transition-delay: 0.4s; }
 
     /* ==================== GLITCH TEXT ==================== */
-    .glitch {
-      position: relative;
-    }
-
-    .glitch:hover {
-      animation: glitch 0.3s ease;
-    }
+    .glitch { position: relative; }
+    .glitch:hover { animation: glitch 0.3s ease; }
 
     @keyframes glitch {
       0% { transform: translate(0); }
@@ -1135,7 +1283,6 @@
       100% { transform: translate(0); }
     }
 
-    /* ==================== COUNTER ANIMATION ==================== */
     .counter { display: inline-block; }
   </style>
 </head>
@@ -1155,6 +1302,15 @@
   <div class="cursor-dot" id="cursorDot"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
+  <!-- Floating Buy Button -->
+  <div class="floating-buy" id="floatingBuy">
+    <a href="https://www.amazon.co.uk/dp/1036933075/ref=cm_sw_r_as_gl_apa_gl_i_673TWT0V9RRPSN0W3ECC?linkCode=ml1&tag=thefaxclubexp-21&linkId=cdbc4ad60826b236d763a8cfebd5cbe8" target="_blank" class="floating-buy-link">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 2l2 4h9l2-4H6zm-1 5v12a2 2 0 002 2h10a2 2 0 002-2V7H5zm4 3h6v2H9v-2z"/></svg>
+      <span>Get the Book</span>
+    </a>
+    <span class="floating-buy-note">As an Amazon Associate we earn from qualifying purchases</span>
+  </div>
+
   <!-- Navigation -->
   <nav id="navbar">
     <a href="#" class="nav-logo glitch">Fax Club</a>
@@ -1162,22 +1318,29 @@
       <a href="#about">About</a>
       <a href="#voices">Voices</a>
       <a href="#press">Press</a>
-      <a href="https://www.amazon.co.uk/dp/B0F1YFP3QR" target="_blank" class="nav-cta">Get the Book</a>
+      <a href="https://www.amazon.co.uk/dp/1036933075/ref=cm_sw_r_as_gl_apa_gl_i_673TWT0V9RRPSN0W3ECC?linkCode=ml1&tag=thefaxclubexp-21&linkId=cdbc4ad60826b236d763a8cfebd5cbe8" target="_blank" class="nav-cta">Get the Book</a>
     </div>
   </nav>
 
   <!-- Hero -->
   <section class="hero">
-    <div class="hero-badge">An Anonymous Experiment in Slow Thinking</div>
-    <h1>100 strangers.<br>52 weeks.<br>One <em>question</em><br>at a time.</h1>
-    <p class="hero-sub">Not a memoir. Not a manifesto.<br>Something else. Something real.<br>Something made slowly, on purpose.</p>
-    <div class="hero-cta-group">
-      <a href="https://www.amazon.co.uk/dp/B0F1YFP3QR" target="_blank" class="btn-primary"><span>Get Your Copy</span></a>
-      <a href="#about" class="btn-secondary">Learn More</a>
+    <div class="hero-content">
+      <div class="hero-badge">An Anonymous Experiment in Slow Thinking</div>
+      <h1>100 strangers.<br>52 weeks.<br>One <em>question</em><br>at a time.</h1>
+      <p class="hero-sub">Not a memoir. Not a manifesto.<br>Something else. Something real.<br>Something made slowly, on purpose.</p>
+      <div class="hero-cta-group">
+        <a href="https://www.amazon.co.uk/dp/1036933075/ref=cm_sw_r_as_gl_apa_gl_i_673TWT0V9RRPSN0W3ECC?linkCode=ml1&tag=thefaxclubexp-21&linkId=cdbc4ad60826b236d763a8cfebd5cbe8" target="_blank" class="btn-primary"><span>Get Your Copy</span></a>
+        <a href="#about" class="btn-secondary">Learn More</a>
+      </div>
+      <div class="affiliate-note">As an Amazon Associate we earn from qualifying purchases</div>
+      <div class="hero-scroll">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
+      </div>
     </div>
-    <div class="hero-scroll">
-      <span>Scroll</span>
-      <div class="scroll-line"></div>
+    <div class="hero-image">
+      <img src="images/book-reading-01.png" alt="Man reading The Fax Club Experiment book outdoors">
+      <div class="hero-image-badge">The book. Out now.</div>
     </div>
   </section>
 
@@ -1204,6 +1367,22 @@
     </div>
   </div>
 
+  <!-- Book Showcase -->
+  <section class="book-showcase">
+    <div class="book-showcase-image">
+      <img src="images/book-reading-02.png" alt="Man reading The Fax Club Experiment in vintage style" loading="lazy">
+    </div>
+    <div class="book-showcase-content">
+      <div class="section-eyebrow reveal">The Book</div>
+      <h2 class="reveal reveal-delay-1">A crazy idea.<br>It couldn't lose.<br><em>Not a bit.</em></h2>
+      <p class="reveal reveal-delay-2">
+        52 weeks of radical curiosity, distilled into something you can hold. The Fax Club Experiment is the book that proves the best conversations happen when nobody's watching.
+      </p>
+      <a href="https://www.amazon.co.uk/dp/1036933075/ref=cm_sw_r_as_gl_apa_gl_i_673TWT0V9RRPSN0W3ECC?linkCode=ml1&tag=thefaxclubexp-21&linkId=cdbc4ad60826b236d763a8cfebd5cbe8" target="_blank" class="btn-primary reveal reveal-delay-3"><span>Buy on Amazon</span></a>
+      <div class="affiliate-note reveal reveal-delay-3" style="color:rgba(255,255,255,0.3); margin-top:0.6rem;">As an Amazon Associate we earn from qualifying purchases</div>
+    </div>
+  </section>
+
   <!-- Stats -->
   <section class="stats">
     <div class="stat" data-delay="0">
@@ -1229,6 +1408,11 @@
       &mdash; The experiment that became a book
     </div>
   </section>
+
+  <!-- 70s Divider -->
+  <div class="retro-divider">
+    <p>"A real, quiet revolution."</p>
+  </div>
 
   <!-- Scrolling Text -->
   <div class="scroll-text-section">
@@ -1263,14 +1447,15 @@
     </div>
     <div class="concept-content">
       <div class="section-eyebrow reveal">The Experiment</div>
-      <h2 class="reveal reveal-delay-1">A real, quiet revolution.</h2>
+      <h2 class="reveal reveal-delay-1">Before the algorithm,<br>there was the question.</h2>
       <p class="reveal reveal-delay-2">
         For one year, 100 strangers received one question per week. They thought deeply. They wrote honestly. They stayed completely anonymous. No likes. No followers. No algorithms. Just raw, human thinking on paper.
       </p>
       <p class="reveal reveal-delay-3">
         The Fax Club Experiment captures the most powerful moments from 52 weeks of radical curiosity &mdash; distilled into a book that feels like eavesdropping on the most honest conversation you've never been invited to.
       </p>
-      <a href="https://www.amazon.co.uk/dp/B0F1YFP3QR" target="_blank" class="btn-primary reveal reveal-delay-4"><span>Order Now</span></a>
+      <a href="https://www.amazon.co.uk/dp/1036933075/ref=cm_sw_r_as_gl_apa_gl_i_673TWT0V9RRPSN0W3ECC?linkCode=ml1&tag=thefaxclubexp-21&linkId=cdbc4ad60826b236d763a8cfebd5cbe8" target="_blank" class="btn-primary reveal reveal-delay-4"><span>Order Now</span></a>
+      <div class="affiliate-note reveal reveal-delay-4">As an Amazon Associate we earn from qualifying purchases</div>
     </div>
   </section>
 
@@ -1364,14 +1549,20 @@
     </div>
   </section>
 
+  <!-- 70s Divider -->
+  <div class="retro-divider">
+    <p>"Not a memoir. Not a manifesto. Something else entirely."</p>
+  </div>
+
   <!-- Final CTA -->
   <section class="cta-section">
     <h2 class="reveal">What if one <em>question</em><br>changed how you think?</h2>
     <p class="reveal reveal-delay-1">Start with the first. Get the book that asks better questions.</p>
     <div class="cta-buttons reveal reveal-delay-2">
-      <a href="https://www.amazon.co.uk/dp/B0F1YFP3QR" target="_blank" class="btn-primary"><span>Buy on Amazon</span></a>
+      <a href="https://www.amazon.co.uk/dp/1036933075/ref=cm_sw_r_as_gl_apa_gl_i_673TWT0V9RRPSN0W3ECC?linkCode=ml1&tag=thefaxclubexp-21&linkId=cdbc4ad60826b236d763a8cfebd5cbe8" target="_blank" class="btn-primary"><span>Buy on Amazon</span></a>
       <a href="#" class="btn-secondary">Free Chapter</a>
     </div>
+    <div class="cta-affiliate reveal reveal-delay-2">As an Amazon Associate we earn from qualifying purchases</div>
     <div class="newsletter-form reveal reveal-delay-3">
       <h3>Join the Signal</h3>
       <p>Very occasional emails. No spam. We hate noise. Just signal.</p>
@@ -1390,11 +1581,12 @@
         <a href="#about">About</a>
         <a href="#voices">Voices</a>
         <a href="#press">Press</a>
-        <a href="https://www.amazon.co.uk/dp/B0F1YFP3QR" target="_blank">Buy the Book</a>
+        <a href="https://www.amazon.co.uk/dp/1036933075/ref=cm_sw_r_as_gl_apa_gl_i_673TWT0V9RRPSN0W3ECC?linkCode=ml1&tag=thefaxclubexp-21&linkId=cdbc4ad60826b236d763a8cfebd5cbe8" target="_blank">Buy the Book</a>
       </div>
     </div>
     <div class="footer-bottom">
       <span>&copy; 2026 The Fax Club Experiment. All rights reserved.</span>
+      <div class="footer-affiliate">As an Amazon Associate we earn from qualifying purchases</div>
       <div class="social-links">
         <a href="#" target="_blank">LinkedIn</a>
         <a href="#" target="_blank">Instagram</a>
@@ -1434,8 +1626,7 @@
       }
       animateRing();
 
-      // Hover effect on interactive elements
-      document.querySelectorAll('a, button, .fax-card, .grid-item').forEach(el => {
+      document.querySelectorAll('a, button, .fax-card, .grid-item, .mosaic-item').forEach(el => {
         el.addEventListener('mouseenter', () => ring.classList.add('hover'));
         el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
       });
@@ -1453,6 +1644,19 @@
         navbar.classList.remove('hidden');
       }
       lastScroll = currentScroll;
+    });
+
+    // ==================== FLOATING BUY BUTTON ====================
+    const floatingBuy = document.getElementById('floatingBuy');
+    const heroSection = document.querySelector('.hero');
+
+    window.addEventListener('scroll', () => {
+      const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+      if (window.pageYOffset > heroBottom - 200) {
+        floatingBuy.classList.add('visible');
+      } else {
+        floatingBuy.classList.remove('visible');
+      }
     });
 
     // ==================== SCROLL REVEAL ====================
@@ -1474,7 +1678,6 @@
       });
     }, observerOptions);
 
-    // Observe all reveal elements
     document.querySelectorAll('.reveal, .stat, .endorsement, .grid-item').forEach(el => {
       revealObserver.observe(el);
     });
@@ -1491,7 +1694,6 @@
           function update(now) {
             const elapsed = now - start;
             const progress = Math.min(elapsed / duration, 1);
-            // Ease out cubic
             const eased = 1 - Math.pow(1 - progress, 3);
             counter.textContent = Math.round(eased * target);
             if (progress < 1) requestAnimationFrame(update);
@@ -1517,18 +1719,19 @@
     });
 
     // ==================== PARALLAX ON MOUSE MOVE (Hero) ====================
-    const hero = document.querySelector('.hero');
-    if (hero) {
-      hero.addEventListener('mousemove', (e) => {
-        const { clientX, clientY } = e;
-        const { innerWidth, innerHeight } = window;
-        const x = (clientX / innerWidth - 0.5) * 10;
-        const y = (clientY / innerHeight - 0.5) * 10;
-        hero.querySelector('h1').style.transform = `translate(${x}px, ${y}px)`;
+    const heroContent = document.querySelector('.hero-content');
+    if (heroContent) {
+      heroContent.addEventListener('mousemove', (e) => {
+        const rect = heroContent.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width - 0.5) * 8;
+        const y = ((e.clientY - rect.top) / rect.height - 0.5) * 8;
+        const h1 = heroContent.querySelector('h1');
+        if (h1) h1.style.transform = `translate(${x}px, ${y}px)`;
       });
 
-      hero.addEventListener('mouseleave', () => {
-        hero.querySelector('h1').style.transform = 'translate(0, 0)';
+      heroContent.addEventListener('mouseleave', () => {
+        const h1 = heroContent.querySelector('h1');
+        if (h1) h1.style.transform = 'translate(0, 0)';
       });
     }
 
@@ -1549,11 +1752,8 @@
         }, 30);
       }
 
-      function stopAutoScroll() {
-        clearInterval(autoScroll);
-      }
+      function stopAutoScroll() { clearInterval(autoScroll); }
 
-      // Start when section is visible
       const faxObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) startAutoScroll();
@@ -1564,6 +1764,8 @@
 
       faxCards.addEventListener('mouseenter', stopAutoScroll);
       faxCards.addEventListener('mouseleave', startAutoScroll);
+      faxCards.addEventListener('touchstart', stopAutoScroll, { passive: true });
+      faxCards.addEventListener('touchend', () => setTimeout(startAutoScroll, 3000));
     }
   </script>
 </body>
