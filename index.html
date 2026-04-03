@@ -1159,12 +1159,20 @@
       overflow: hidden;
     }
 
-    .loader.slide-away {
-      transform: translateY(100%);
-      transition: transform 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+    .loader.done { visibility: hidden; pointer-events: none; }
+
+    /* Page wrapper — starts below viewport, slides up like paper */
+    .page-wrap {
+      position: relative;
+      z-index: 10002;
+      transform: translateY(100vh);
+      transition: none;
     }
 
-    .loader.done { visibility: hidden; pointer-events: none; }
+    .page-wrap.reveal {
+      transition: transform 1s cubic-bezier(0.33, 1, 0.68, 1);
+      transform: translateY(0);
+    }
 
     /* CRT scanlines on loader */
     .loader::before {
@@ -1780,6 +1788,7 @@
     <div class="loader-version">FAX-OS v4.2.1 // 2026</div>
   </div>
 
+  <div class="page-wrap" id="pageWrap">
   <div class="grain"></div>
 
   <!-- Idle Fax Machine -->
@@ -2104,6 +2113,7 @@
       </div>
     </div>
   </footer>
+  </div><!-- end .page-wrap -->
 
   <script>
     // ==================== LOADER: FAX BOOT SEQUENCE ====================
@@ -2166,13 +2176,14 @@
           });
           loader.classList.add('glitch-out');
         }},
-        { t: 3700, fn: () => loader.classList.add('slide-away') },
+        { t: 3600, fn: () => document.getElementById('pageWrap').classList.add('reveal') },
         { t: 4700, fn: () => loader.classList.add('done') },
       ];
 
       // Only run full sequence on first visit per session
       if (sessionStorage.getItem('faxclub-loaded')) {
         loader.classList.add('done');
+        document.getElementById('pageWrap').classList.add('reveal');
         clearInterval(clockInterval);
         clearInterval(glitchInterval);
         return;
