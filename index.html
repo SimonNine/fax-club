@@ -1157,10 +1157,14 @@
       background: #0C0C0B;
       z-index: 10001;
       overflow: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
 
-    .loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader.slide-away {
+      transform: translateY(100%);
+      transition: transform 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .loader.done { visibility: hidden; pointer-events: none; }
 
     /* CRT scanlines on loader */
     .loader::before {
@@ -2162,7 +2166,8 @@
           });
           loader.classList.add('glitch-out');
         }},
-        { t: 3700, fn: () => loader.classList.add('done') },
+        { t: 3700, fn: () => loader.classList.add('slide-away') },
+        { t: 4700, fn: () => loader.classList.add('done') },
       ];
 
       // Only run full sequence on first visit per session
